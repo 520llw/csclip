@@ -1,0 +1,33 @@
+---
+description: 禁止使用 Cursor 自带的默认 subagent（Task 工具），强制全局生效
+alwaysApply: true
+---
+
+# 禁止使用 Cursor 默认 Subagent（强制执行）
+
+## 规则级别：最高优先级（不可覆盖）
+
+**本规则适用于所有会话、所有模式、所有任务类型，无任何例外。**
+
+## 核心规则
+
+**严格禁止**使用 Cursor 自带的 `Task` 工具（即 subagent 机制）来替代主会话的执行。**当前对话内全部推理与工具执行**须由主会话模型直接完成。
+
+## 禁止范围
+
+以下 subagent_type 明确禁止：
+- `generalPurpose`
+- `explore`
+- `shell`
+- `browser-use`
+- `action-planning-agent`
+- `cli-execution-agent`
+- `cli-explore-agent`
+
+**不得**以「并行」「加速」「探索代码库」等理由调用上述机制。
+
+## 例外与说明
+
+- 若用户**显式要求**使用子代理或 Task 工具，可遵循用户指令。
+- 若 Cursor 产品后续新增 subagent / Task 类型，默认视为禁止；但如该新类型是完成用户当前请求的**唯一可行路径**（例如主会话无法访问特定环境），可在向用户说明原因后使用。
+- 本规则与 gjw 工作流规则（`gjw.mdc`、`mcp-messenger.mdc`）、长上下文规则（`long-context-agent.mdc`）并存。

@@ -1,0 +1,44 @@
+# BALF Cell Classification Project — Confirmed Experience
+
+## Environment
+- Use `/data/software/mamba/envs/cel` conda environment (Python 3.9.21)
+- FastAPI max compatible version: 0.128.x (0.129+ requires Python 3.10)
+- BiomedCLIP config `open_clip_config.json` contains `hf_model_name` path — must match actual local path
+- SAM3 requires `iopath` and `pycocotools` as additional dependencies
+
+## BiomedCLIP Local Weights
+- Path: `/home/xut/csclip/labeling_tool/weights/biomedclip/`
+- Load via: `create_model_from_pretrained("local-dir:/path/to/biomedclip")`
+- The `hf_model_name` and `hf_tokenizer_name` in `open_clip_config.json` 
+  must point to the local directory containing `config.json`, `tokenizer.json` etc.
+
+## Classification Findings (最新)
+- **三骨干最优**: BiomedCLIP(0.42) + Phikon-v2(0.18) + DINOv2-S(0.07) + morph(0.33)
+  - Acc=87.13%, mF1=0.7550, Eos F1=0.4658
+  - + transductive(2 iter, top5, conf>0.025) + cascade(thr=0.012, morph_w=0.45)
+- Phikon-v2 (pathology ViT-L, 1024d, 303M params) 模型路径: model_weights/phikon_v2/
+- BiomedCLIP文本原型跨类相似度过高(0.86-0.93)，文本信号贡献有限
+- 40维增强形态学特征(base 12 + HSV 6 + color 3 + texture 10 + nuclear 5 + extra 4)
+- Fisher判别比用于Eos/Neu级联分类器权重
+- 非参数kNN(k=7)显著优于参数化方法(SVM/LR/MLP)，40样本易过拟合
+- Feature rectification/centering破坏BiomedCLIP特征结构
+
+## CellposeSAM Findings (最新)
+- **最优: cellprob_threshold=-3.0, diameter=50.0**
+  - F1=0.7575, Prec=0.6795, Rec=0.8556, mIoU=0.8241
+  - vs 默认(cp=0.0, d=30): F1提升 +32.5%
+- diameter是最关键参数：BALF细胞实际尺寸大于默认30px
+- 自适应预处理(CLAHE/去噪)无效或略有害
+- FP后处理过滤有害（同时降低TP和FP）
+- flow_threshold=0.2提高精确率到0.70但召回率降到0.60
+
+## Data
+- data2_organized: 180 images (144 train + 36 val), 4 effective classes
+- Class distribution is highly imbalanced: Lymphocyte 54.9%, Macrophage 31.1%,
+  Neutrophil 9.7%, Eosinophil 4.4%
+- YOLO polygon format: "class_id x1 y1 x2 y2 ..." (normalised coordinates)
+
+## Architecture
+- 4 external modules (biomedclip_*.py) at project root — fully implemented
+- Feature extractors in labeling_tool/feature_extractors/ — pluggable via factory
+- model_config.yaml controls backend selection

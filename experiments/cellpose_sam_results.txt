@@ -1,0 +1,56 @@
+================================================================================
+Cellpose-SAM (v4) Segmentation Evaluation
+================================================================================
+Model: /home/xut/.cellpose/models/cpsam
+
+--- data2_organized ---
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [1/36] 2022-06-10-14-00-16-29037_2048-1536
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used

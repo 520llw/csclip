@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "gjw-mcp": {
+      "command": "node",
+      "args": [
+        "server.js"
+      ]
+    }
+  }
+}

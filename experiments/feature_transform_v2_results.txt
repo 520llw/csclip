@@ -1,0 +1,111 @@
+Loading features...
+
+Seed 42...
+  baseline_SADC_ATD                                       mf1=0.7816 Eos=0.5190
+  power_05                                                mf1=0.7727 Eos=0.5000
+  power_03                                                mf1=0.7736 Eos=0.4932
+  power_07                                                mf1=0.7762 Eos=0.5067
+  center                                                  mf1=0.7338 Eos=0.4379
+  center+power05                                          mf1=0.7264 Eos=0.4205
+  lda3                                                    mf1=0.7595 Eos=0.4901
+  lda3+center                                             mf1=0.7611 Eos=0.4937
+  lda3+power05                                            mf1=0.7595 Eos=0.4819
+  ncm_baseline                                            mf1=0.6559 Eos=0.2740
+  ncm+power05                                             mf1=0.6625 Eos=0.2824
+  ncm+center                                              mf1=0.7569 Eos=0.5276
+  no_atd                                                  mf1=0.7811 Eos=0.5161
+  power05_no_atd                                          mf1=0.7761 Eos=0.5103
+  center_no_atd                                           mf1=0.7498 Eos=0.4476
+
+Seed 123...
+  baseline_SADC_ATD                                       mf1=0.7703 Eos=0.4854
+  power_05                                                mf1=0.7706 Eos=0.4808
+  power_03                                                mf1=0.7664 Eos=0.4695
+  power_07                                                mf1=0.7700 Eos=0.4854
+  center                                                  mf1=0.7826 Eos=0.5169
+  center+power05                                          mf1=0.7761 Eos=0.5000
+  lda3                                                    mf1=0.7961 Eos=0.5634
+  lda3+center                                             mf1=0.8000 Eos=0.5857
+  lda3+power05                                            mf1=0.8053 Eos=0.5802
+  ncm_baseline                                            mf1=0.7080 Eos=0.3502
+  ncm+power05                                             mf1=0.7160 Eos=0.3556
+  ncm+center                                              mf1=0.7661 Eos=0.4943
+  no_atd                                                  mf1=0.7712 Eos=0.4854
+  power05_no_atd                                          mf1=0.7676 Eos=0.4762
+  center_no_atd                                           mf1=0.7969 Eos=0.5556
+
+Seed 456...
+  baseline_SADC_ATD                                       mf1=0.7688 Eos=0.5170
+  power_05                                                mf1=0.7575 Eos=0.4737
+  power_03                                                mf1=0.7623 Eos=0.4932
+  power_07                                                mf1=0.7627 Eos=0.5000
+  center                                                  mf1=0.7150 Eos=0.3575
+  center+power05                                          mf1=0.7102 Eos=0.3462
+  lda3                                                    mf1=0.7421 Eos=0.4000
+  lda3+center                                             mf1=0.7278 Eos=0.4000
+  lda3+power05                                            mf1=0.7282 Eos=0.3803
+  ncm_baseline                                            mf1=0.7167 Eos=0.3886
+  ncm+power05                                             mf1=0.7075 Eos=0.3684
+  ncm+center                                              mf1=0.6944 Eos=0.3585
+  no_atd                                                  mf1=0.7614 Eos=0.4967
+  power05_no_atd                                          mf1=0.7602 Eos=0.4837
+  center_no_atd                                           mf1=0.7328 Eos=0.4342
+
+Seed 789...
+  baseline_SADC_ATD                                       mf1=0.7134 Eos=0.3443
+  power_05                                                mf1=0.7211 Eos=0.3621
+  power_03                                                mf1=0.7044 Eos=0.3063
+  power_07                                                mf1=0.7199 Eos=0.3621
+  center                                                  mf1=0.6867 Eos=0.2903
+  center+power05                                          mf1=0.6855 Eos=0.2869
+  lda3                                                    mf1=0.7159 Eos=0.3379
+  lda3+center                                             mf1=0.7055 Eos=0.3176
+  lda3+power05                                            mf1=0.7063 Eos=0.3394
+  ncm_baseline                                            mf1=0.6651 Eos=0.2531
+  ncm+power05                                             mf1=0.6704 Eos=0.2692
+  ncm+center                                              mf1=0.6770 Eos=0.2533
+  no_atd                                                  mf1=0.7102 Eos=0.3333
+  power05_no_atd                                          mf1=0.7213 Eos=0.3621
+  center_no_atd                                           mf1=0.6845 Eos=0.2986
+
+Seed 2026...
+  baseline_SADC_ATD                                       mf1=0.7250 Eos=0.3363
+  power_05                                                mf1=0.7166 Eos=0.3269
+  power_03                                                mf1=0.7041 Eos=0.2772
+  power_07                                                mf1=0.7240 Eos=0.3429
+  center                                                  mf1=0.6705 Eos=0.2424
+  center+power05                                          mf1=0.6703 Eos=0.2359
+  lda3                                                    mf1=0.6982 Eos=0.2842
+  lda3+center                                             mf1=0.6997 Eos=0.3102
+  lda3+power05                                            mf1=0.6995 Eos=0.2955
+  ncm_baseline                                            mf1=0.6340 Eos=0.2344
+  ncm+power05                                             mf1=0.6375 Eos=0.2344
+  ncm+center                                              mf1=0.6551 Eos=0.2167
+  no_atd                                                  mf1=0.7244 Eos=0.3478
+  power05_no_atd                                          mf1=0.7169 Eos=0.3269
+  center_no_atd                                           mf1=0.6932 Eos=0.2930
+
+================================================================================================================================================================
+FEATURE TRANSFORM RESULTS (5 seeds, data2_organized)
+================================================================================================================================================================
+Strategy                                                         Acc     mF1     Eos     Neu     Lym     Mac     As    Fs
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+baseline_SADC_ATD                                             0.8723  0.7518  0.4404  0.7523  0.9334  0.8811  0.011 0.027
+power_07                                                      0.8720  0.7506  0.4394  0.7481  0.9322  0.8826  0.009 0.024
+no_atd                                                        0.8711  0.7497  0.4359  0.7494  0.9331  0.8803  0.012 0.028
+power05_no_atd                                                0.8711  0.7484  0.4318  0.7484  0.9314  0.8820  0.009 0.024
+power_05                                                      0.8708  0.7477  0.4287  0.7496  0.9317  0.8807  0.008 0.024
+lda3                                                          0.8581  0.7424  0.4151  0.7700  0.9341  0.8503  0.021 0.034
+power_03                                                      0.8707  0.7422  0.4079  0.7455  0.9322  0.8832  0.010 0.031
+lda3+power05                                                  0.8564  0.7398  0.4155  0.7578  0.9296  0.8563  0.022 0.039
+lda3+center                                                   0.8523  0.7388  0.4214  0.7590  0.9304  0.8445  0.024 0.037
+center_no_atd                                                 0.8529  0.7314  0.4058  0.7422  0.9286  0.8491  0.026 0.041
+center                                                        0.8377  0.7177  0.3690  0.7409  0.9251  0.8359  0.023 0.039
+center+power05                                                0.8371  0.7137  0.3579  0.7314  0.9253  0.8402  0.021 0.037
+ncm+center                                                    0.8337  0.7099  0.3701  0.7144  0.9277  0.8275  0.024 0.044
+ncm+power05                                                   0.7938  0.6788  0.3020  0.6895  0.9060  0.8175  0.029 0.029
+ncm_baseline                                                  0.7904  0.6760  0.3001  0.6866  0.9047  0.8126  0.037 0.032
+
+*** BASELINE: mF1=0.7518 Eos=0.4404 ***
+*** BEST: baseline_SADC_ATD mF1=0.7518 Eos=0.4404 ***
+*** Improvement: +0.0000 ***

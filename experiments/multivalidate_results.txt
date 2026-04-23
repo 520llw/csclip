@@ -1,0 +1,514 @@
+================================================================================
+MULTI-DATASET VALIDATION
+================================================================================
+
+MultiCenter: train=1897 val=475 images
+data2:       train=144 val=36 images
+
+################################################################################
+DATASET: data2
+################################################################################
+
+================================================================================
+CLASSIFICATION: data2 (4 classes)
+================================================================================
+  Seed 42: Acc=0.8290 mF1=0.7234
+  Seed 123: Acc=0.8381 mF1=0.7380
+  Seed 456: Acc=0.8564 mF1=0.7251
+  Seed 789: Acc=0.8047 mF1=0.6850
+  Seed 2026: Acc=0.8503 mF1=0.7211
+
+  AVERAGE over 5 seeds:
+  Acc  = 0.8357 ± 0.0182
+  mF1  = 0.7185 ± 0.0178
+  Eosinophil   F1 = 0.3468 ± 0.0209
+  Neutrophil   F1 = 0.7476 ± 0.0332
+  Lymphocyte   F1 = 0.9156 ± 0.0151
+  Macrophage   F1 = 0.8641 ± 0.0393
+
+================================================================================
+SEGMENTATION: data2
+================================================================================
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [1/36] 2022-06-10-14-00-16-29037_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [2/36] 2022-06-10-14-01-55-26852_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [3/36] 2022-06-10-14-03-51-27123_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [4/36] 2022-06-10-14-05-26-85638_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [5/36] 2022-06-10-14-09-32-87353_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [6/36] 2022-06-10-14-11-52-90136_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [7/36] 2022-06-10-14-13-22-94245_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [8/36] 2022-06-10-14-16-07-86968_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [9/36] 2022-06-10-14-20-40-78498_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [10/36] 2022-06-10-14-24-32-99297_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [11/36] 2022-06-10-14-27-23-32836_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [12/36] 2022-06-10-14-29-37-81100_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [13/36] 2022-06-10-14-33-15-69561_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [14/36] 2022-06-10-14-34-55-71733_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [15/36] 2022-06-10-14-36-57-12512_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [16/36] 2022-06-10-14-38-15-82373_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [17/36] 2022-06-22-09-18-49-49408_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [18/36] 2022-06-22-09-20-06-42821_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [19/36] 2022-06-22-09-21-58-13359_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [20/36] 2022-06-22-09-26-57-68176_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [21/36] 2022-06-22-09-28-36-84579_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [22/36] 2022-06-22-09-29-59-49823_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [23/36] 2022-06-22-09-32-19-35420_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [24/36] 2022-06-22-09-33-07-43658_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [25/36] 2022-06-22-09-33-56-90899_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [26/36] 2022-06-22-09-34-43-70962_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [27/36] 2022-06-22-09-35-28-52693_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [28/36] 2022-06-22-09-36-34-51064_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [29/36] 2022-06-22-09-41-04-00724_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [30/36] 2022-06-22-09-46-05-43418_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [31/36] 2022-06-22-09-47-14-29138_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [32/36] 2022-06-22-09-48-36-59894_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [33/36] 2022-06-22-09-50-13-59334_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [34/36] 2022-06-22-09-52-57-47590_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [35/36] 2022-06-22-09-54-16-37865_2048-1536.png
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [36/36] 2022-06-22-09-55-48-35659_2048-1536.png
+
+  Method                  TP    FP    FN    Prec     Rec      F1
+  -----------------------------------------------------------------
+  PAMSR                 1103   613   213  0.6428  0.8381  0.7276
+  optimized_d50         1087   591   229  0.6478  0.8260  0.7261
+  default                896  1269   420  0.4139  0.6809  0.5148
+
+################################################################################
+DATASET: multicenter
+################################################################################
+
+Extracting features for multicenter...
+  multicenter/train: 5242 cells
+    BiomedCLIP loaded
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+WARNING:transformers.models.auto.image_processing_auto:Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+    Phikon-v2 loaded
+    DINOv2-S loaded
+    [200/5242] 6.0s
+    [400/5242] 11.0s
+    [600/5242] 16.3s
+    [800/5242] 21.4s
+    [1000/5242] 26.4s
+    [1200/5242] 31.5s
+    [1400/5242] 36.4s
+    [1600/5242] 41.7s
+    [1800/5242] 47.1s
+    [2000/5242] 52.5s
+    [2200/5242] 57.9s
+    [2400/5242] 63.1s
+    [2600/5242] 68.2s
+    [2800/5242] 73.7s
+    [3000/5242] 79.0s
+    [3200/5242] 84.1s
+    [3400/5242] 89.2s
+    [3600/5242] 94.3s
+    [3800/5242] 99.9s
+    [4000/5242] 105.4s
+    [4200/5242] 110.4s
+    [4400/5242] 115.8s
+    [4600/5242] 121.5s
+    [4800/5242] 127.1s
+    [5000/5242] 132.7s
+    [5200/5242] 137.9s
+    Done: 5242 cells in 139.1s
+    Saved BiomedCLIP → /home/xut/csclip/experiments/feature_cache/multicenter_biomedclip_train.npz
+    Saved Phikon-v2 → /home/xut/csclip/experiments/feature_cache/multicenter_phikon_v2_train.npz
+    Saved DINOv2-S → /home/xut/csclip/experiments/feature_cache/multicenter_dinov2_s_train.npz
+  multicenter/val: 1349 cells
+    BiomedCLIP loaded
+    Phikon-v2 loaded
+    DINOv2-S loaded
+    [200/1349] 5.5s
+    [400/1349] 10.6s
+    [600/1349] 16.2s
+    [800/1349] 21.6s
+    [1000/1349] 27.0s
+    [1200/1349] 32.1s
+    Done: 1349 cells in 36.2s
+    Saved BiomedCLIP → /home/xut/csclip/experiments/feature_cache/multicenter_biomedclip_val.npz
+    Saved Phikon-v2 → /home/xut/csclip/experiments/feature_cache/multicenter_phikon_v2_val.npz
+    Saved DINOv2-S → /home/xut/csclip/experiments/feature_cache/multicenter_dinov2_s_val.npz
+
+================================================================================
+CLASSIFICATION: multicenter (4 classes)
+================================================================================
+  Seed 42: Acc=0.4670 mF1=0.3295
+  Seed 123: Acc=0.3595 mF1=0.2682
+  Seed 456: Acc=0.5211 mF1=0.3661
+  Seed 789: Acc=0.4374 mF1=0.3116
+  Seed 2026: Acc=0.3936 mF1=0.2889
+
+  AVERAGE over 5 seeds:
+  Acc  = 0.4357 ± 0.0563
+  mF1  = 0.3129 ± 0.0337
+  Eosinophil   F1 = 0.0087 ± 0.0054
+  Neutrophil   F1 = 0.5631 ± 0.0706
+  Lymphocyte   F1 = 0.2440 ± 0.0324
+  Macrophage   F1 = 0.4356 ± 0.0724
+
+================================================================================
+SEGMENTATION: multicenter
+================================================================================
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [1/40] 10.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [3/40] 1002.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [4/40] 1008.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [6/40] 1017.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [7/40] 1031.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [10/40] 1042.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [11/40] 1044.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [13/40] 1059.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [15/40] 1063.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [16/40] 1079.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [17/40] 108.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [18/40] 1082.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [19/40] 1083.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [20/40] 1086.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [21/40] 109.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [23/40] 11.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [25/40] 1104.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [26/40] 1105.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [27/40] 1112.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [29/40] 1119.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [30/40] 1121.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [32/40] 1130.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [34/40] 1139.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [35/40] 1147.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [36/40] 115.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [37/40] 1152.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [38/40] 1167.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [39/40] 1169.jpg
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+WARNING:cellpose.models:channels deprecated in v4.0.1+. If data contain more than 3 channels, only the first 3 channels will be used
+  [40/40] 1190.jpg
+
+  Method                  TP    FP    FN    Prec     Rec      F1
+  -----------------------------------------------------------------
+  optimized_d50           56    62    29  0.4746  0.6588  0.5517
+  PAMSR                   56    63    29  0.4706  0.6588  0.5490
+  default                 54   123    31  0.3051  0.6353  0.4122
+
+================================================================================
+ALL VALIDATIONS COMPLETE
+================================================================================

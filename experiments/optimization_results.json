@@ -1,0 +1,43 @@
+{
+  "best": {
+    "enc_config": {
+      "cell_margin": 0.1,
+      "context_margin": 0.3,
+      "bg_value": 128,
+      "cell_weight": 0.85,
+      "context_weight": 0.15
+    },
+    "n_support": 100,
+    "strategy": "balanced",
+    "morph_strength": 0.0,
+    "accuracy": 0.8115501519756839,
+    "macro_f1": 0.7058318251833416,
+    "per_class": {
+      "Eosinophil": {
+        "precision": 0.21505376344086022,
+        "recall": 0.6896551724137931,
+        "f1": 0.3278688524590164,
+        "support": 58
+      },
+      "Neutrophil": {
+        "precision": 0.7171052631578947,
+        "recall": 0.8582677165354331,
+        "f1": 0.7813620071684587,
+        "support": 127
+      },
+      "Lymphocyte": {
+        "precision": 0.9746031746031746,
+        "recall": 0.850415512465374,
+        "f1": 0.908284023668639,
+        "support": 722
+      },
+      "Macrophage": {
+        "precision": 0.8764367816091954,
+        "recall": 0.7457212713936431,
+        "f1": 0.8058124174372523,
+        "support": 409
+      }
+    }
+  },
+  "all_results_count": 180
+}

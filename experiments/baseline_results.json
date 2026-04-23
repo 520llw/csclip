@@ -1,0 +1,61 @@
+{
+  "metrics": {
+    "total": 1316,
+    "accuracy": 0.7758358662613982,
+    "macro_f1": 0.6317161618226572,
+    "mean_confidence": 0.25661143187240987,
+    "per_class": {
+      "Eosinophil": {
+        "precision": 0.1893939393939394,
+        "recall": 0.43103448275862066,
+        "f1": 0.2631578947368421,
+        "support": 58,
+        "predicted": 132
+      },
+      "Neutrophil": {
+        "precision": 0.5026737967914439,
+        "recall": 0.7401574803149606,
+        "f1": 0.5987261146496816,
+        "support": 127,
+        "predicted": 187
+      },
+      "Lymphocyte": {
+        "precision": 0.9599358974358975,
+        "recall": 0.8296398891966759,
+        "f1": 0.8900445765230312,
+        "support": 722,
+        "predicted": 624
+      },
+      "Macrophage": {
+        "precision": 0.8123324396782842,
+        "recall": 0.7408312958435208,
+        "f1": 0.7749360613810742,
+        "support": 409,
+        "predicted": 373
+      }
+    }
+  },
+  "support_counts": {
+    "Eosinophil": 5,
+    "Neutrophil": 5,
+    "Lymphocyte": 5,
+    "Macrophage": 5
+  },
+  "confusion_matrix": {
+    "Eosinophil": {
+      "Macrophage": 1,
+      "Eosinophil": 0,
+      "Lymphocyte": 0
+    },
+    "Lymphocyte": {
+      "Lymphocyte": 38,
+      "Eosinophil": 0,
+      "Macrophage": 0
+    },
+    "Macrophage": {
+      "Macrophage": 9,
+      "Eosinophil": 2,
+      "Lymphocyte": 0
+    }
+  }
+}

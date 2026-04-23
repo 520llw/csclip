@@ -1,0 +1,94 @@
+Downloading DinoBloom-b weights...
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125d00>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 6e1380d1-ab1d-4fef-96ce-71112385b533)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Retrying in 1s [Retry 1/5].
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125d90>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 8fef1ffe-691e-45e3-a7f7-59fca248fdd9)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Retrying in 2s [Retry 2/5].
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125370>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 95449393-9136-4dc4-861e-b89c88b17111)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Retrying in 4s [Retry 3/5].
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7767911251c0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 082db7bb-5f2d-42f8-b522-3073000933c8)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Retrying in 8s [Retry 4/5].
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7767910d22e0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: 8715dabb-072a-4e53-9b44-6dd21c85aa6f)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Retrying in 8s [Retry 5/5].
+'(MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125be0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: b029c9d6-62f0-4b31-9706-6e8a40fe17f7)')' thrown while requesting HEAD https://huggingface.co/MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin
+Traceback (most recent call last):
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connection.py", line 199, in _new_conn
+    sock = connection.create_connection(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+OSError: [Errno 101] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connection.py", line 693, in connect
+    self.sock = sock = self._new_conn()
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connection.py", line 214, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x776791125be0>: Failed to establish a new connection: [Errno 101] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125be0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1550, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1467, in get_hf_file_metadata
+    r = _request_wrapper(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 306, in _request_wrapper
+    response = http_backoff(method=method, url=url, **params)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/utils/_http.py", line 326, in http_backoff
+    raise err
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/utils/_http.py", line 307, in http_backoff
+    response = session.request(method=method, url=url, **kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/utils/_http.py", line 96, in send
+    return super().send(request, *args, **kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/requests/adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: (MaxRetryError("HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /MarrLab/DinoBloom/resolve/main/pytorch_model_b.bin (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x776791125be0>: Failed to establish a new connection: [Errno 101] Network is unreachable'))"), '(Request ID: b029c9d6-62f0-4b31-9706-6e8a40fe17f7)')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/xut/csclip/experiments/dinobloom_extract.py", line 194, in <module>
+    main()
+  File "/home/xut/csclip/experiments/dinobloom_extract.py", line 176, in main
+    model, feat_dim = load_dinobloom("b")
+  File "/home/xut/csclip/experiments/dinobloom_extract.py", line 29, in load_dinobloom
+    ckpt_path = hf_hub_download(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1121, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/data/software/mamba/envs/cel/lib/python3.9/site-packages/huggingface_hub/file_download.py", line 1665, in _raise_on_head_call_error
+    raise LocalEntryNotFoundError(
+huggingface_hub.errors.LocalEntryNotFoundError: An error happened while trying to locate the file on the Hub and we cannot find the requested files in the local cache. Please check your connection and try again or make sure your Internet connection is on.

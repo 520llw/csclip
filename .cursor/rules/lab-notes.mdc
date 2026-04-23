@@ -1,0 +1,111 @@
+---
+description: gjw 经验 / 实验知识库（lab-notes/）维护规则 — 让不同 AI 会话能接手、让论文写作有素材
+alwaysApply: true
+lab-notes-version: "1.0.0"
+---
+
+## 触发条件
+
+当**任一**条件成立时，必须按本规则进行读写：
+
+1. 用户在 gjw 「🔬 科研 → 📓 记录」分类提交的模板（含「知识库 · 初始化 / 新实验日志 / 追加结果 / 经验总结 / 文献笔记 / 接手简报 / 生成论文章节」等）
+2. 用户明确说到「实验记录 / 实验日志 / 复盘 / 经验总结 / 接手 / handoff / lab-notes / 笔记」
+3. 当前项目根存在 `lab-notes/` 目录（一旦存在就视为启用，不可忽视）
+
+---
+
+## 目录结构（硬性）
+
+```
+<repo root>/
+└── lab-notes/
+    ├── README.md                     # 人读 + AI 读：本库的使用说明
+    ├── INDEX.md                      # 全部条目的一览表（倒序按日期）
+    ├── HANDOFF.md                    # 最新的接手简报（覆盖更新）
+    ├── experiments/                  # 实验日志：每个 run / 每次变更一条
+    │   └── YYYY-MM-DD-<slug>.md
+    ├── insights/                     # 经验 / 失败 / trick 沉淀
+    │   └── YYYY-MM-DD-<slug>.md
+    └── literature/                   # 文献笔记
+        └── <year>-<firstAuthorLast>-<slug>.md
+```
+
+- **slug** 用小写英文 + 连字符；简短、可检索（如 `ablation-backbone-swap`）。
+- **文件名中的日期**一律使用写入当日（ISO 8601：`YYYY-MM-DD`）。
+- **一条就是一条**：不要把多次实验塞进同一文件，但可在同一文件里按「## 更新 YYYY-MM-DD-HH:MM」段追加。
+
+## 条目 frontmatter（硬性）
+
+所有 `.md` 条目顶部必须有 YAML frontmatter：
+
+- 公共字段：`date`、`type`（experiment / insight / literature / handoff）、`tags: [...]`
+- experiments 必含：`exp_id`、`status`（running / done / failed / paused）、`seed`、`commit`（若可得）
+- insights 必含：`severity`（low / medium / high）、`related_exps: [...]`
+- literature 必含：`cite_key`、`venue`、`rating`
+
+---
+
+## 五条硬性协作约定
+
+### 1. 诚实优先 · 禁止编造
+
+- **只写真的发生过的实验结果**：数值、超参、日期、commit、log 路径——凡是用户没提供且你无法在代码库里核实的，一律写 `TODO: 需补 <具体项>`，不得编造。
+- **引用已有条目**时必须给出文件路径（`lab-notes/experiments/2026-04-17-xxx.md`），方便用户和下一任 AI 溯源。
+- **不确定的文献 / 作者 / 数字**必须带 "（待我核实）"。
+
+### 2. 追加而非覆盖
+
+- 默认所有写操作是**追加**；只有以下情况允许覆盖：
+  1. `HANDOFF.md`：每次重新生成时整体覆盖，但先读一遍旧版提取有价值的内容。
+  2. `INDEX.md`：在顶部追加一行即可，不动历史行。
+  3. 条目 frontmatter 的 `status`、结论小节，在有新证据时允许更新，但必须保留旧结论并标明"YYYY-MM-DD 更新"。
+- 禁止删除任何历史条目。如果某条经验被证伪，用一条新 insight 引用并说明"此条否定 xxx"。
+
+### 3. 写得"可被检索、可被搬运"
+
+- 每个条目第一行标题必须**具体**：✗ "BN 问题" / ✓ "小 batch 下 BatchNorm 统计量漂移导致 val 抖动"。
+- insights 的每条"准则"写成祈使句：`当 X 时 → 做 Y / 不做 Z`，便于 future AI grep。
+- 关键数值附单位与上下文：`Top-1: 72.3% (ImageNet val, 3 seeds mean, ±0.4)`，而不是孤零零 "72.3"。
+- 避免只贴代码不写结论；每段末尾至少一句 "所以……"。
+
+### 4. 每次写入必同步 INDEX
+
+- 任何新增 / 更新条目后，**必须**在 `lab-notes/INDEX.md` 顶部追加或更新一行：
+  - 格式：`| YYYY-MM-DD | type | slug | 一句话摘要 | 文件路径 |`
+- 若首次启用本库，在初始化时创建 INDEX.md，包含表头和空表体。
+
+### 5. 对下一任 AI 负责
+
+- 用户要求"接手简报 / HANDOFF"时，必须：
+  1. 扫描 `lab-notes/` 全部现存条目（或按日期限制最近 30 条以免超长）
+  2. 重新生成 `HANDOFF.md`：覆盖式写入，但保留旧版的有价值内容摘要（在文末 `## 上一版 HANDOFF 摘要`）
+  3. 简报必须包含：当前研究目标 / 主假设 / 最近实验时间线 / 关键 insight / 已知坑 / 下一步建议 / 代码库状态指针
+  4. 一句结语："新接手 AI 读完本文件 + 最近 3 条实验日志即可开始工作"
+
+---
+
+## 写论文时的用法
+
+当用户说"帮我写 Experiments 章节 / Ablation / Discussion / Limitations"时：
+
+1. 先列 `lab-notes/` 中该章节涉及的条目（最多 15 条）。
+2. 按章节生成草稿：**每个关键数值在括号里标注来源文件路径**，便于用户核对。
+3. 数据只能来自日志；缺失项写 `TODO: 需补`。
+4. 风格：学术、客观、紧凑；禁止 "significantly improves / first / best / only"，除非 insight 或日志明确支撑。
+
+---
+
+## 与其他规则的关系
+
+- 本规则与 `research-workflow.mdc` 并行：
+  - `research-workflow.mdc` 规定「AI 回答的学术严谨度」
+  - 本规则规定「知识库的读写格式」
+  - 冲突时以**更严谨者**为准。
+- 每轮写入完成后，仍需按 `mcp-messenger.mdc` 调用 `check_messages`，让用户能当轮补充信息或指出错误。
+
+---
+
+## 元信息
+
+- 版本：1.0.0（2026-04，与 gjw 增强层 v3 同步发布）
+- 生效范围：当前项目。是否需要项目级开启由 `lab-notes/` 目录是否存在决定，但只要用户显式触发就必须遵守。

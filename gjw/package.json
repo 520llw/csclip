@@ -1,0 +1,14 @@
+{
+  "name": "gjw-mcp",
+  "version": "1.0.0",
+  "description": "Cursor 额度透支 - 本地浏览器对话，让 AI 持续工作",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.2"
+  }
+}

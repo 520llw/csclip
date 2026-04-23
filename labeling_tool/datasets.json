@@ -1,0 +1,115 @@
+{
+  "datasets": [
+    {
+      "id": "b6b7e9d4",
+      "name": "MultiCenter_organized",
+      "path": "D:\\cell_datasets\\MultiCenter_organized",
+      "train_images": "D:\\cell_datasets\\MultiCenter_organized\\images\\train",
+      "val_images": "D:\\cell_datasets\\MultiCenter_organized\\images\\val",
+      "nc": 7,
+      "names": {
+        "0": "CCEC",
+        "1": "RBC",
+        "2": "SEC",
+        "3": "Eosinophil",
+        "4": "Neutrophil",
+        "5": "Lymphocyte",
+        "6": "Macrophage"
+      },
+      "yaml_path": "D:\\cell_datasets\\MultiCenter_organized\\data_7class.yaml",
+      "structure": "yolo",
+      "added_at": "2026-04-07T14:32:42"
+    },
+    {
+      "id": "b5209518",
+      "name": "data1_organized",
+      "path": "D:\\cell_datasets\\data1_organized",
+      "train_images": "D:\\cell_datasets\\data1_organized\\images\\train",
+      "val_images": "D:\\cell_datasets\\data1_organized\\images\\val",
+      "nc": 7,
+      "names": {
+        "0": "CCEC",
+        "1": "RBC",
+        "2": "SEC",
+        "3": "Eosinophil",
+        "4": "Neutrophil",
+        "5": "Lymphocyte",
+        "6": "Macrophage"
+      },
+      "yaml_path": "D:\\cell_datasets\\data1_organized\\data_7class.yaml",
+      "structure": "yolo",
+      "added_at": "2026-04-07T15:01:23"
+    },
+    {
+      "id": "4f8ec299",
+      "name": "data2_organized",
+      "path": "D:\\cell_datasets\\data2_organized",
+      "train_images": "D:\\cell_datasets\\data2_organized\\images\\train",
+      "val_images": "D:\\cell_datasets\\data2_organized\\images\\val",
+      "nc": 7,
+      "names": {
+        "0": "CCEC",
+        "1": "RBC",
+        "2": "SEC",
+        "3": "Eosinophil",
+        "4": "Neutrophil",
+        "5": "Lymphocyte",
+        "6": "Macrophage"
+      },
+      "yaml_path": "D:\\cell_datasets\\data2_organized\\data_box_yolo.yaml",
+      "structure": "yolo",
+      "added_at": "2026-04-07T15:48:33"
+    },
+    {
+      "id": "7974b81a",
+      "name": "A",
+      "path": "D:\\cell_datasets\\Tao_Divide\\A",
+      "train_images": "D:\\cell_datasets\\Tao_Divide\\A",
+      "val_images": "",
+      "nc": 1,
+      "names": {
+        "0": "object"
+      },
+      "yaml_path": "",
+      "structure": "flat",
+      "added_at": "2026-04-08T21:56:36"
+    },
+    {
+      "id": "2269d262",
+      "name": "data2_organized",
+      "path": "/home/xut/csclip/cell_datasets/data2_organized",
+      "train_images": "/home/xut/csclip/cell_datasets/data2_organized/images/train",
+      "val_images": "/home/xut/csclip/cell_datasets/data2_organized/images/val",
+      "nc": 7,
+      "names": {
+        "0": "CCEC",
+        "1": "RBC",
+        "2": "SEC",
+        "3": "Eosinophil",
+        "4": "Neutrophil",
+        "5": "Lymphocyte",
+        "6": "Macrophage"
+      },
+      "yaml_path": "/home/xut/csclip/cell_datasets/data2_organized/data_box_yolo.yaml",
+      "structure": "yolo",
+      "added_at": "2026-04-19T09:05:47"
+    },
+    {
+      "id": "03c3cd43",
+      "name": "yolo_seg_dataset",
+      "path": "/home/xut/csclip/cell_datasets/WBC Seg/yolo_seg_dataset",
+      "train_images": "/home/xut/csclip/cell_datasets/WBC Seg/yolo_seg_dataset/images/train",
+      "val_images": "/home/xut/csclip/cell_datasets/WBC Seg/yolo_seg_dataset/images/val",
+      "nc": 1,
+      "names": {
+        "0": "blood_cell"
+      },
+      "yaml_path": "/home/xut/csclip/cell_datasets/WBC Seg/yolo_seg_dataset/dataset.yaml",
+      "structure": "yolo",
+      "added_at": "2026-04-19T09:45:57"
+    }
+  ],
+  "excluded_groups": [
+    "D:\\VM_share\\cell_datasets\\MultiCenter_organized\\images\\train"
+  ]
+}

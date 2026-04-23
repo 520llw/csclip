@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>BALF 细胞标注系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <style>
+        :root {
+            --bg-0: #0a0d16;
+            --bg-1: #0f1220;
+            --bg-2: #141828;
+            --bg-3: #1a1f34;
+            --bg-4: #212740;
+            --border: #262e45;
+            --border-subtle: rgba(255,255,255,0.06);
+            --accent: #6b93ff;
+            --accent-hover: #8bacff;
+            --accent-glow: rgba(107,147,255,0.25);
+            --accent-dim: rgba(107,147,255,0.10);
+            --accent-2: #a78bfa;
+            --text-0: #eaeff7;
+            --text-1: #b8c4dd;
+            --text-2: #7484a5;
+            --danger: #ff6b7a;
+            --danger-dim: rgba(255,107,122,0.12);
+            --success: #2dd4a8;
+            --success-dim: rgba(45,212,168,0.12);
+            --warn: #f5b942;
+            --warn-dim: rgba(245,185,66,0.12);
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 10px;
+            --radius-xl: 14px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+            --transition-fast: 0.12s ease;
+            --transition-normal: 0.2s ease;
+        }
+        * { box-sizing: border-box; margin: 0; }
+        body {
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(107,147,255,0.07), transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(167,139,250,0.04), transparent 50%),
+                linear-gradient(180deg, #0c1020 0%, #0e1222 40%, #0f1220 100%);
+            color: var(--text-0);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 13px; line-height: 1.45;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, rgba(15,18,32,0.98), rgba(12,16,28,0.98));
+            backdrop-filter: blur(12px);
+            flex-shrink: 0;
+        }
+        #left-sidebar, #right-sidebar {
+            display: flex !important;
+            flex-direction: column !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex-shrink: 0 !important;
+        }
+        #left-sidebar { min-width: 220px; width: 18rem; max-width: 20vw; }
+        #right-sidebar { min-width: 260px; width: 20rem; max-width: 24vw; overflow-y: auto; }
+        .panel-shell {
+            background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.008));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+            transition: background var(--transition-fast);
+        }
+        .panel-shell:hover {
+            background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+        }
+        .soft-divider { border-color: var(--border-subtle) !important; }
+        .active-image { background: rgba(107,147,255,0.1) !important; border-left: 2px solid var(--accent); }
+        .has-label::after {
+            content: ''; display: inline-block;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--success); margin-left: 6px; flex-shrink: 0;
+            box-shadow: 0 0 4px rgba(45,212,168,0.4);
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 5px 12px; border-radius: var(--radius-md); font-weight: 600;
+            transition: all var(--transition-fast); cursor: pointer; border: none; font-size: 12px;
+            letter-spacing: 0.01em; position: relative; overflow: hidden;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #5a82e6);
+            color: var(--bg-0); box-shadow: 0 1px 4px rgba(107,147,255,0.15);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--accent-hover), #6b93ff);
+            box-shadow: 0 2px 16px var(--accent-glow);
+        }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #e55a6a); color: var(--bg-0); }
+        .btn-danger:hover { box-shadow: 0 2px 12px rgba(255,107,122,0.3); }
+        .btn-ghost {
+            background: var(--bg-3); color: var(--text-1);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { background: var(--bg-4); border-color: #3a4560; }
+        .btn-secondary {
+            background: var(--bg-3); color: var(--text-0);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: var(--bg-4); border-color: #3a4560; }
+        .btn-save-next {
+            background: linear-gradient(135deg, var(--success), #1db88e);
+            color: var(--bg-0); box-shadow: 0 1px 4px rgba(45,212,168,0.15);
+        }
+        .btn-save-next:hover { box-shadow: 0 2px 16px rgba(45,212,168,0.3); filter: brightness(1.08); }
+
+        .select-input {
+            background: var(--bg-3); border: 1px solid var(--border);
+            color: var(--text-0); border-radius: var(--radius-md);
+            padding: 5px 8px; font-size: 12px; width: 100%;
+            transition: border-color 0.15s ease;
+        }
+        .select-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+
+        .section-title {
+            font-size: 10px; color: var(--text-2); text-transform: uppercase;
+            letter-spacing: 0.6px; font-weight: 600; margin-bottom: 4px;
+        }
+
+        .tag {
+            display: inline-flex; align-items: center; gap: 3px;
+            background: var(--accent-dim); border: 1px solid rgba(122,162,255,0.15);
+            border-radius: 999px; padding: 1px 7px; font-size: 9px;
+            color: var(--accent); font-weight: 600; letter-spacing: 0.3px;
+        }
+
+        /* ── Image list ── */
+        .img-item {
+            padding: 4px 10px; cursor: pointer; font-size: 11px; display: flex;
+            align-items: center; justify-content: space-between;
+            border-left: 2px solid transparent;
+            transition: background 0.1s ease, border-color 0.1s ease;
+            color: var(--text-1);
+        }
+        .img-item:hover { background: rgba(255,255,255,0.03); }
+        #image-list {
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent 16%);
+        }
+
+        /* ── Annotation items ── */
+        .ann-item-checkbox { width: 13px; height: 13px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
+        .ann-item {
+            width: 100%; text-align: left; padding: 4px 8px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--bg-3); font-size: 11px;
+            cursor: pointer; color: var(--text-0);
+            display: flex; align-items: center; justify-content: space-between; gap: 6px;
+            transition: border-color 0.12s ease, background 0.12s ease;
+        }
+        .ann-item:hover { border-color: #3a4560; }
+        .ann-item.active { border-color: var(--accent); background: rgba(122,162,255,0.06); }
+        .ann-item-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+        .ann-item-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .ann-type-tag { color: var(--text-2); font-size: 9px; }
+        .ann-del-btn {
+            width: 16px; height: 16px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; line-height: 1; color: var(--text-2); cursor: pointer;
+            opacity: 0; transition: opacity 0.12s, background 0.12s, color 0.12s;
+        }
+        .ann-item:hover .ann-del-btn { opacity: 1; }
+        .ann-del-btn:hover { background: #ef4444; color: #fff; }
+        #annotation-list {
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent 20%);
+        }
+
+        /* ── Directory search ── */
+        .sidebar-scan-btn {
+            background: none; border: none; cursor: pointer; font-size: 12px;
+            padding: 0 2px; opacity: 0.5; transition: opacity 0.12s;
+        }
+        .sidebar-scan-btn:hover { opacity: 1; }
+        .dir-search-panel {
+            margin-top: 6px; border: 1px solid var(--border); border-radius: var(--radius-md);
+            padding: 6px; background: var(--bg-2);
+        }
+        .dir-search-results { max-height: 150px; overflow-y: auto; margin-top: 4px; }
+        .dir-search-results:empty { display: none; }
+        .dir-result-item {
+            font-size: 11px; padding: 3px 6px; border-radius: var(--radius-sm); cursor: pointer;
+            color: var(--text-1); transition: background 0.1s;
+            display: flex; justify-content: space-between; align-items: center; gap: 4px;
+        }
+        .dir-result-item:hover { background: var(--bg-3); }
+        .dir-result-item .dir-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+        .dir-result-item .dir-tag {
+            font-size: 9px; padding: 1px 4px; border-radius: 3px; flex-shrink: 0;
+            background: var(--bg-3); color: var(--text-2);
+        }
+        .dir-result-item .dir-tag.new { background: rgba(52,211,153,0.15); color: var(--success); }
+
+        /* ── Collapsible sections ── */
+        .collapsible-header { cursor: pointer; user-select: none; transition: background 0.12s; }
+        .collapsible-header:hover { background: rgba(255,255,255,0.025); }
+        .collapse-arrow {
+            font-size: 9px; color: var(--text-2); transition: transform 0.2s;
+            display: inline-block; width: 10px; text-align: center;
+        }
+        .collapsed .collapse-arrow { transform: rotate(-90deg); }
+        .collapsible-body {
+            overflow: hidden; max-height: 600px;
+            transition: max-height 0.25s ease, padding 0.25s ease, opacity 0.15s ease;
+            opacity: 1;
+        }
+        .collapsed .collapsible-body {
+            max-height: 0; padding-top: 0 !important; padding-bottom: 0 !important; opacity: 0;
+        }
+
+        /* ── SAM strategy ── */
+        .sam-strategy-label {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 11px; color: var(--text-1); cursor: pointer;
+            padding: 2px 4px; border-radius: var(--radius-sm); transition: background 0.12s;
+        }
+        .sam-strategy-label:hover { background: rgba(255,255,255,0.03); }
+        .sam-strategy-label input[type="checkbox"] { margin: 0; }
+        .sam-strategy-label span { user-select: none; }
+
+        /* ── Unsaved indicator ── */
+        .unsaved-dot {
+            width: 7px; height: 7px; border-radius: 50%; background: var(--warn);
+            display: none; transition: opacity 0.3s ease;
+        }
+        .unsaved-dot.visible { display: inline-block; animation: pulse-dot 2s ease-in-out infinite; }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        /* ── Status message ── */
+        #status-msg {
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            opacity: 0; transform: translateY(-3px);
+        }
+        #status-msg.visible { opacity: 1; transform: translateY(0); }
+        .status-pill {
+            padding: 4px 10px;
+            border: 1px solid rgba(251,191,36,0.2);
+            border-radius: 999px;
+            background: rgba(251,191,36,0.08);
+            min-width: 96px;
+            text-align: center;
+        }
+        .context-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01));
+        }
+        .context-chip {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.025);
+            color: var(--text-1);
+            font-size: 10px;
+        }
+        .context-chip strong {
+            color: var(--text-0);
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 220px;
+        }
+        .context-chip.compact strong { max-width: 140px; }
+        .context-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(122,162,255,0.35);
+            flex-shrink: 0;
+        }
+        .canvas-surface {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+                radial-gradient(circle at 20% 20%, rgba(122,162,255,0.06), transparent 20%),
+                var(--bg-0);
+            overflow: hidden !important;
+        }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 84px;
+            padding: 14px 10px;
+            text-align: center;
+            color: var(--text-2);
+            font-size: 10px;
+        }
+        .empty-state strong {
+            color: var(--text-1);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .section-note {
+            color: var(--text-2);
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        /* ── Footer ── */
+        .status-bar {
+            background: var(--bg-0); border-top: 1px solid var(--border);
+            padding: 0 12px; font-size: 10px; color: var(--text-2);
+            display: flex; align-items: center; gap: 10px;
+            height: 22px; flex-shrink: 0;
+        }
+        .status-bar .status-item { display: flex; align-items: center; gap: 3px; }
+        .status-bar .sep { width: 1px; height: 10px; background: var(--border); opacity: 0.6; }
+        .status-bar .auto-save-indicator { color: var(--success); opacity: 0; transition: opacity 0.3s ease; }
+        .status-bar .auto-save-indicator.flash { opacity: 1; }
+        #footer-dirty, #footer-saved { transition: opacity 0.2s ease; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+        /* ── Loading overlay ── */
+        #loading-overlay {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, rgba(11,14,23,0.88) 0%, rgba(11,14,23,0.6) 100%);
+            backdrop-filter: blur(6px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
+            z-index: 50;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+        #loading-overlay.show { opacity: 1; pointer-events: auto; }
+
+        .loader-ring {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: 2.5px solid rgba(122,162,255,0.12);
+            border-top-color: var(--accent);
+            animation: spin 0.8s cubic-bezier(0.4,0,0.2,1) infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loader-text {
+            font-size: 12px; color: var(--text-2); letter-spacing: 0.2px;
+            animation: pulse-text 2s ease-in-out infinite;
+        }
+        @keyframes pulse-text {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .loader-dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
+        #loading-cancel-btn:hover { color: var(--text-1) !important; border-color: rgba(255,255,255,0.35) !important; background: rgba(255,255,255,0.06); }
+        .loading-stop-btn {
+            margin-top: 10px; padding: 6px 24px; font-size: 12px; font-weight: 600;
+            color: #fff; background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+            border: 1px solid rgba(239,68,68,0.4); border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; letter-spacing: 0.5px;
+        }
+        .loading-stop-btn:hover:not(:disabled) { opacity: 0.85; transform: scale(1.03); }
+        .loading-stop-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #555; border-color: #666; }
+        @keyframes dots {
+            0%  { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+
+        .panel-section { transition: max-height 0.25s ease; overflow: hidden; }
+        .btn.mode-active { box-shadow: 0 0 8px rgba(122,162,255,0.25); }
+        .kbd {
+            font-size: 9px; opacity: 0.45; font-family: 'SF Mono', 'Cascadia Code', monospace;
+            background: rgba(255,255,255,0.06); padding: 0 3px; border-radius: 2px;
+            margin-left: 2px;
+        }
+
+        /* ── Cellpose batch progress ── */
+        .batch-progress-shell {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(122, 162, 255, 0.12);
+            background:
+                linear-gradient(180deg, rgba(122, 162, 255, 0.08), rgba(122, 162, 255, 0.02)),
+                rgba(255, 255, 255, 0.01);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .batch-progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+        .batch-progress-title {
+            color: var(--text-1);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .batch-progress-percent {
+            min-width: 42px;
+            text-align: right;
+            color: var(--accent);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .batch-progress-track {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .batch-progress-fill {
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #5b8cff 0%, #7aa2ff 45%, #9fc0ff 100%);
+            box-shadow: 0 0 16px rgba(122,162,255,0.35);
+            transition: width 0.35s ease, background 0.25s ease;
+        }
+        .batch-progress-fill.running::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+            transform: translateX(-100%);
+            animation: batch-progress-shine 1.5s linear infinite;
+        }
+        .batch-progress-fill.done {
+            background: linear-gradient(90deg, #16a34a 0%, #22c55e 60%, #86efac 100%);
+            box-shadow: 0 0 16px rgba(34,197,94,0.28);
+        }
+        .batch-progress-fill.failed {
+            background: linear-gradient(90deg, #fb7185 0%, #ff7b86 60%, #ffc0c7 100%);
+            box-shadow: 0 0 16px rgba(255,123,134,0.24);
+        }
+        .batch-progress-meta {
+            display: flex;
+            justify-content: flex-start;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--text-2);
+            font-variant-numeric: tabular-nums;
+        }
+        .batch-stats-bar {
+            display: flex;
+            width: 100%;
+            height: 7px;
+            margin-top: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.04);
+        }
+        .batch-stats-seg {
+            height: 100%;
+            transition: width 0.35s ease;
+        }
+        .batch-stats-seg.saved { background: linear-gradient(90deg, #15803d, #22c55e); }
+        .batch-stats-seg.skipped { background: linear-gradient(90deg, #c084fc, #8b5cf6); }
+        .batch-stats-seg.failed { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+        .batch-stats-legend {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 10px;
+        }
+        .batch-stat-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+            color: var(--text-1);
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 999px;
+            padding: 3px 6px;
+        }
+        .batch-stat-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            flex-shrink: 0;
+        }
+        .batch-stat-dot.saved { background: #22c55e; }
+        .batch-stat-dot.skipped { background: #8b5cf6; }
+        .batch-stat-dot.failed { background: #fb7185; }
+        @keyframes batch-progress-shine {
+            to { transform: translateX(100%); }
+        }
+
+        /* ── Few-shot / Classification panel ── */
+        .fewshot-card {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.015);
+            border-radius: var(--radius-lg);
+            padding: 6px;
+            position: relative;
+        }
+        .fewshot-support-summary {
+            display: flex; flex-direction: column; gap: 4px;
+            padding: 6px 8px;
+            font-size: 10px; color: var(--text-1);
+            background: var(--bg-3); border-radius: var(--radius-md);
+            line-height: 1.35;
+        }
+        .fewshot-summary-hint {
+            color: var(--text-2); font-size: 10px;
+            display: block; margin: 0;
+            white-space: normal; word-break: break-word;
+        }
+        .fewshot-support-counts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+        .fewshot-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 6px;
+            background: rgba(255,255,255,0.06); border-radius: var(--radius-sm);
+            font-size: 10px; white-space: nowrap;
+        }
+        .fewshot-chip strong {
+            font-weight: 600; max-width: 60px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .fewshot-chip .fewshot-chip-count {
+            font-variant-numeric: tabular-nums; font-weight: 700; color: var(--text-0); flex-shrink: 0;
+        }
+        .fewshot-summary-tag {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-weight: 600; white-space: nowrap;
+        }
+        .fewshot-summary-total { color: var(--text-2); font-size: 9px; margin-left: auto; }
+
+        .fewshot-actions {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+        }
+        .fewshot-actions .fewshot-mini-btn {
+            flex: 1; min-width: 60px; padding: 5px 8px; font-size: 11px;
+        }
+
+        .fewshot-popover {
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--bg-3);
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: max-height 0.25s ease, opacity 0.15s ease, margin 0.2s ease;
+            opacity: 1;
+        }
+        .fewshot-popover.collapsed-panel {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            border-color: transparent;
+        }
+        .fewshot-popover-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 10px; font-size: 11px; font-weight: 600;
+            color: var(--text-0); border-bottom: 1px solid var(--border); flex-shrink: 0;
+        }
+        .fewshot-popover-close {
+            width: 18px; height: 18px; border: none; background: transparent;
+            color: var(--text-2); cursor: pointer; font-size: 13px;
+            line-height: 18px; text-align: center; border-radius: var(--radius-sm);
+        }
+        .fewshot-popover-close:hover { background: rgba(255,255,255,0.08); color: var(--text-0); }
+
+        .fewshot-support-list {
+            flex: 1; min-height: 0; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 1px;
+            padding: 2px 6px 6px;
+        }
+        .fewshot-support-row {
+            display: flex; align-items: center; gap: 5px;
+            padding: 2px 6px; font-size: 10px; line-height: 18px;
+            border-radius: var(--radius-sm); transition: background 0.1s;
+        }
+        .fewshot-support-row:hover { background: rgba(255,255,255,0.04); }
+        .fewshot-support-name { color: var(--text-0); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .fewshot-support-file {
+            color: var(--text-2); overflow: hidden; text-overflow: ellipsis;
+            white-space: nowrap; flex: 1; min-width: 0;
+        }
+        .fewshot-support-remove {
+            width: 14px; height: 14px; border-radius: var(--radius-sm);
+            border: none; background: transparent; color: var(--text-2);
+            cursor: pointer; flex-shrink: 0; font-size: 10px;
+            line-height: 14px; text-align: center; padding: 0;
+            transition: all 0.1s;
+        }
+        .fewshot-support-remove:hover { color: #fff; background: #dc2626; }
+
+        .fewshot-metric-grid { display: flex; flex-direction: column; gap: 3px; }
+        .fewshot-metric {
+            border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.015);
+            border-radius: var(--radius-md); padding: 4px 8px; font-size: 10px;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+        .fewshot-metric-label { color: var(--text-2); font-size: 10px; }
+        .fewshot-metric-value { color: var(--text-0); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+        .fewshot-result-list {
+            max-height: 82px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .fewshot-result-item {
+            border: 1px solid rgba(255,255,255,0.04); background: rgba(255,255,255,0.015);
+            border-radius: var(--radius-md); padding: 4px 6px; font-size: 10px;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .fewshot-result-item.good { border-color: rgba(52,211,153,0.2); }
+        .fewshot-result-item.bad { border-color: rgba(255,123,134,0.2); }
+
+        .fewshot-empty { color: var(--text-2); font-size: 10px; text-align: center; padding: 6px 4px; }
+        .fewshot-subtle-select {
+            background: var(--bg-3); border: 1px solid var(--border);
+            color: var(--text-1); border-radius: var(--radius-md);
+            padding: 3px 6px; font-size: 10px; width: 100%;
+        }
+        .fewshot-inline-meta { color: var(--text-2); font-size: 9px; line-height: 1.3; }
+        .fewshot-mini-btn {
+            font-size: 10px; padding: 3px 8px !important;
+            white-space: nowrap;
+            letter-spacing: -0.1px;
+        }
+        .fewshot-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.05);
+            margin: 6px 0;
+        }
+        .fewshot-hidden {
+            display: none;
+        }
+        .fewshot-prompt-group {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 4px 6px;
+        }
+        .fewshot-prompt-group label {
+            font-size: 9px; font-weight: 600; color: var(--text-1);
+            display: block; margin-bottom: 2px;
+        }
+        .fewshot-prompt-input {
+            width: 100%; font-size: 9px; padding: 3px 5px;
+            background: var(--bg-3); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text-0);
+            font-family: inherit; resize: vertical; min-height: 36px;
+        }
+        .fewshot-prompt-input:focus {
+            outline: none; border-color: var(--primary);
+        }
+        .fewshot-prompt-hint {
+            font-size: 8px; color: var(--text-2); margin-top: 1px;
+        }
+        /* Smart Classification & Research Eval optimized styles */
+        .sc-icon-btn {
+            width: 20px; height: 20px; border: none; background: transparent;
+            color: var(--text-2); cursor: pointer; font-size: 11px;
+            line-height: 20px; text-align: center; border-radius: var(--radius-sm);
+            padding: 0; flex-shrink: 0; transition: all 0.1s;
+        }
+        .sc-icon-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-0); }
+        .sc-details-summary {
+            cursor: pointer; font-size: 10px; color: var(--text-2);
+            user-select: none; padding: 2px 0;
+        }
+        .sc-details-summary:hover { color: var(--text-1); }
+        .sc-label {
+            font-size: 9px; color: var(--text-2); margin-bottom: 2px;
+            font-weight: 500; letter-spacing: 0.02em;
+        }
+        .sc-eval-config {
+            margin-bottom: 4px;
+        }
+        .sc-action-row {
+            display: flex; gap: 4px; margin-top: 6px;
+        }
+        .sc-btn-warn {
+            border: 1px solid var(--warn); color: var(--warn);
+            background: transparent;
+        }
+        .sc-btn-warn:hover {
+            background: rgba(251, 191, 36, 0.1);
+        }
+        .sc-research-card {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.015);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+        }
+        .sc-eval-result {
+            font-size: 11px; color: var(--text-2); line-height: 1.4;
+        }
+        .sc-eval-result.has-result {
+            background: var(--bg-3); border-radius: var(--radius-md);
+            padding: 6px 8px;
+        }
+        .sc-metric-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 4px; margin-top: 6px;
+        }
+        .sc-metric-card {
+            background: var(--bg-3); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: var(--radius-md); padding: 6px 8px; text-align: center;
+        }
+        .sc-metric-card .sc-metric-val {
+            font-size: 16px; font-weight: 700; color: var(--text-0);
+            font-variant-numeric: tabular-nums; line-height: 1.2;
+        }
+        .sc-metric-card .sc-metric-label {
+            font-size: 9px; color: var(--text-2); margin-top: 2px;
+        }
+        .sc-per-class-table {
+            width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 6px;
+        }
+        .sc-per-class-table th {
+            text-align: left; padding: 3px 6px; font-size: 9px; color: var(--text-2);
+            border-bottom: 1px solid var(--border); font-weight: 500;
+        }
+        .sc-per-class-table td {
+            padding: 3px 6px; color: var(--text-1); border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-variant-numeric: tabular-nums;
+        }
+        .sc-per-class-table tr:last-child td { border-bottom: none; }
+
+        /* ── Thumbnail strip ── */
+        .thumb-item {
+            position: relative; cursor: pointer; flex-shrink: 0;
+            border: 2px solid transparent; border-radius: 4px;
+            transition: border-color 0.15s, transform 0.15s;
+            height: 48px; min-width: 48px; display: flex; align-items: center; justify-content: center;
+            background: var(--bg-2); overflow: hidden;
+        }
+        .thumb-item:hover { border-color: var(--text-2); transform: scale(1.05); }
+        .thumb-active { border-color: var(--accent) !important; box-shadow: 0 0 8px rgba(122,162,255,0.4); }
+        .thumb-labeled::after {
+            content: ''; position: absolute; bottom: 2px; right: 2px;
+            width: 6px; height: 6px; border-radius: 50%; background: #22c55e;
+        }
+        .thumb-idx {
+            position: absolute; bottom: 1px; left: 3px;
+            font-size: 8px; color: rgba(255,255,255,0.7); font-family: monospace;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        #thumbnail-strip::-webkit-scrollbar { height: 4px; }
+        #thumbnail-strip::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
+
+        /* ── Shortcut help overlay ── */
+        #shortcut-help-overlay {
+            display: none; position: fixed; inset: 0; z-index: 9500;
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        #shortcut-help-overlay.show { display: flex; }
+        .shortcut-panel {
+            background: var(--bg-1); border: 1px solid var(--border); border-radius: 12px;
+            padding: 24px 28px; max-width: 680px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+        .shortcut-panel h3 { margin: 16px 0 8px; color: var(--accent); font-size: 13px; font-weight: 600; }
+        .shortcut-panel h3:first-child { margin-top: 0; }
+        .shortcut-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+        .shortcut-row .sk { color: var(--text-2); }
+        .shortcut-row kbd { background: var(--bg-3); padding: 1px 6px; border-radius: 3px; font-size: 10px; font-family: monospace; border: 1px solid var(--border); }
+
+        /* ── Data Management Modal ── */
+        .dm-tab-group { display: flex; gap: 2px; }
+        .dm-tab-btn {
+            display: flex; align-items: center; gap: 5px;
+            padding: 5px 12px; border-radius: var(--radius-md);
+            background: transparent; border: none; color: var(--text-2);
+            font-size: 11px; font-weight: 500; cursor: pointer;
+            transition: all var(--transition-fast); white-space: nowrap;
+        }
+        .dm-tab-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-1); }
+        .dm-tab-btn.active {
+            background: linear-gradient(135deg, var(--accent), #5a82e6);
+            color: var(--bg-0); font-weight: 600;
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+        .dm-tab-btn.active svg { stroke: var(--bg-0); }
+        .dm-close-btn {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-md); background: transparent; border: none;
+            color: var(--text-2); cursor: pointer; transition: all var(--transition-fast);
+        }
+        .dm-close-btn:hover { background: rgba(255,107,122,0.15); color: var(--danger); }
+
+        /* ── Data Management Cards ── */
+        .dm-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 18px; transition: all var(--transition-normal);
+            position: relative; overflow: hidden;
+        }
+        .dm-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+        }
+        .dm-card:hover {
+            border-color: rgba(107,147,255,0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 0 0 1px rgba(107,147,255,0.08);
+            transform: translateY(-1px);
+        }
+        .dm-stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 18px; position: relative; overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        .dm-stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        }
+        .dm-stat-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
+        .dm-stat-card.accent::before { background: linear-gradient(90deg, var(--accent), transparent); }
+        .dm-stat-card.success::before { background: linear-gradient(90deg, var(--success), transparent); }
+        .dm-stat-card.warn::before { background: linear-gradient(90deg, var(--warn), transparent); }
+        .dm-stat-card.danger::before { background: linear-gradient(90deg, var(--danger), transparent); }
+
+        /* ── Step indicator for right sidebar ── */
+        .step-indicator {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 18px; height: 18px; border-radius: 50%;
+            font-size: 9px; font-weight: 700; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent), #5a82e6);
+            color: var(--bg-0); box-shadow: 0 1px 4px var(--accent-glow);
+        }
+
+        /* ── Canvas empty state ── */
+        .canvas-empty-state {
+            position: absolute; inset: 0; z-index: 5;
+            display: flex; align-items: center; justify-content: center;
+            background:
+                radial-gradient(ellipse at 50% 40%, rgba(107,147,255,0.04), transparent 60%),
+                linear-gradient(180deg, var(--bg-1), rgba(15,18,32,0.98));
+            pointer-events: auto;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .canvas-empty-state.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .canvas-empty-state__inner {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; max-width: 380px; padding: 40px;
+        }
+        .canvas-empty-state__icon {
+            width: 88px; height: 88px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(107,147,255,0.08), rgba(167,139,250,0.06));
+            border: 1px solid rgba(107,147,255,0.12);
+            margin-bottom: 24px;
+            animation: empty-state-float 4s ease-in-out infinite;
+        }
+        @keyframes empty-state-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .canvas-empty-state__title {
+            font-size: 18px; font-weight: 700; color: var(--text-0);
+            margin: 0 0 10px;
+            background: linear-gradient(90deg, var(--text-0), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .canvas-empty-state__desc {
+            font-size: 13px; line-height: 1.6; color: var(--text-2);
+            margin: 0 0 28px;
+        }
+        .canvas-empty-state__actions { margin-bottom: 20px; }
+        .canvas-empty-state__btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 24px !important; font-size: 13px !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .canvas-empty-state__btn:hover {
+            box-shadow: 0 6px 24px rgba(107,147,255,0.35);
+            transform: translateY(-1px);
+        }
+        .canvas-empty-state__hints {
+            display: flex; gap: 16px; font-size: 11px; color: var(--text-2);
+        }
+        .canvas-empty-state__hints kbd {
+            background: var(--bg-3); padding: 1px 6px; border-radius: 3px;
+            font-size: 10px; font-family: monospace; border: 1px solid var(--border);
+            margin-right: 3px;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- ─── Header ─── -->
+    <header class="px-4 flex justify-between items-center" style="background:linear-gradient(90deg, rgba(10,13,22,0.95), rgba(15,18,32,0.95)); height:44px; backdrop-filter:blur(16px); border-bottom:1px solid var(--border-subtle); box-shadow:0 1px 8px rgba(0,0,0,0.3);">
+        <div class="flex items-center gap-3">
+            <div style="display:flex; align-items:center; gap:8px; padding:4px 12px; border-radius:var(--radius-lg); background:linear-gradient(135deg, rgba(107,147,255,0.12), rgba(167,139,250,0.08)); border:1px solid rgba(107,147,255,0.15);">
+                <div style="width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent-glow); animation:pulse-dot 2s ease-in-out infinite;"></div>
+                <h1 style="font-size:13px; font-weight:700; letter-spacing:0.03em; color:var(--text-0); background:linear-gradient(90deg, var(--text-0), var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">BALF 细胞标注</h1>
+                <span id="app-version-tag" style="font-size:8px; color:var(--text-2); opacity:0.5; margin-left:6px; font-family:monospace;">v0409F</span>
+            </div>
+            <div id="unsaved-dot" class="unsaved-dot" title="有未保存的修改"></div>
+            <span id="status-msg" class="text-xs status-pill" style="color:var(--warn)"></span>
+        </div>
+        <div class="flex gap-2 items-center">
+            <button id="save-btn" class="btn btn-primary flex items-center gap-1" style="padding:5px 16px; font-size:12px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                保存 <span class="kbd">S</span>
+            </button>
+            <button id="save-next-btn" class="btn btn-save-next flex items-center gap-1" style="padding:5px 16px; font-size:12px;">
+                保存&下一张 <span class="kbd">⏎</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ─── Main ─── -->
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- ─── Left Sidebar ─── -->
+        <div id="left-sidebar" class="w-72 sidebar flex flex-col border-r soft-divider" style="min-width:260px; display:flex !important; flex-direction:column !important;">
+
+            <!-- Image group selector -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex items-center justify-between">
+                    <div class="section-title" style="margin:0">图片集</div>
+                    <button id="scan-groups-btn" class="sidebar-scan-btn" title="扫描项目目录">🔍</button>
+                </div>
+                <select id="group-select" class="select-input mt-1" style="font-size:11px;"></select>
+                <div id="group-info" class="mt-1" style="color:var(--text-2); font-size:10px;"></div>
+                <div id="group-search-panel" class="dir-search-panel" style="display:none;">
+                    <input type="text" id="group-search-input" class="select-input" placeholder="搜索目录..." style="font-size:10px; padding:3px 6px;">
+                    <div id="group-search-results" class="dir-search-results"></div>
+                </div>
+            </div>
+
+            <!-- Label set + Subset -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div class="section-title" style="margin:0">标注集</div>
+                            <div class="flex items-center gap-1">
+                                <button id="gen-bbox-btn" class="btn btn-ghost" style="font-size:8px; padding:0px 4px;" title="从polygon生成BBox标注集">BBox</button>
+                                <button id="scan-labelsets-btn" class="sidebar-scan-btn" title="扫描标注目录">🔍</button>
+                            </div>
+                        </div>
+                        <select id="labelset-select" class="select-input mt-1" style="font-size:11px;"></select>
+                        <div id="labelset-search-panel" class="dir-search-panel" style="display:none;">
+                            <input type="text" id="labelset-search-input" class="select-input" placeholder="搜索标注目录..." style="font-size:10px; padding:3px 6px;">
+                            <div id="labelset-search-results" class="dir-search-results"></div>
+                        </div>
+                    </div>
+                    <div style="width:64px; flex-shrink:0;">
+                        <div class="section-title">子集</div>
+                        <select id="subset-select" class="select-input" style="font-size:11px;">
+                            <option value="train">Train</option>
+                            <option value="val">Val</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="px-3 py-1.5 border-b soft-divider flex items-center gap-1.5 panel-shell">
+                <button id="prev-btn" class="btn btn-secondary flex-1" style="font-size:10px; padding:3px 0;">← 上一张</button>
+                <button id="next-btn" class="btn btn-secondary flex-1" style="font-size:10px; padding:3px 0;">下一张 →</button>
+            </div>
+
+            <!-- Image search -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="section-title" style="margin:0">图片</div>
+                    <span id="image-counter" style="color:var(--text-2); font-size:10px; font-variant-numeric:tabular-nums;">0 / 0</span>
+                </div>
+                <input type="text" id="search-input" placeholder="搜索..."
+                    class="select-input" style="font-size:10px; padding:3px 6px;">
+                <select id="image-status-filter" class="select-input" style="font-size:9px; padding:2px 4px; margin-top:2px;">
+                    <option value="all">全部图像</option>
+                    <option value="labeled">已标注</option>
+                    <option value="unlabeled">未标注</option>
+                    <option value="flagged">已标记</option>
+                </select>
+            </div>
+
+            <!-- Image list -->
+            <div id="image-list" class="flex-1 overflow-y-auto"></div>
+
+        </div>
+
+        <!-- ─── Center: Canvas ─── -->
+        <div class="flex-1 flex flex-col" style="background:var(--bg-1); min-width:0; overflow:hidden;">
+
+            <!-- Toolbar -->
+            <div class="flex items-center gap-2" style="background:linear-gradient(90deg, rgba(20,24,40,0.92), rgba(26,31,52,0.88)); padding:4px 10px; height:36px; backdrop-filter:blur(12px); border-bottom:1px solid var(--border-subtle);">
+                <div class="flex gap-0.5" style="background:var(--bg-0); border-radius:var(--radius-lg); padding:2px; border:1px solid var(--border); box-shadow:var(--shadow-sm);">
+                    <button id="mode-select" class="btn btn-primary text-xs" style="min-width:auto; padding:3px 12px; font-size:11px; border-radius:var(--radius-md);">
+                        <span class="kbd" style="margin-right:3px; margin-left:0;">V</span>选择
+                    </button>
+                    <button id="mode-adjust" class="btn btn-ghost text-xs" style="min-width:auto; padding:3px 12px; font-size:11px; border:none; border-radius:var(--radius-md);">
+                        <span class="kbd" style="margin-right:3px; margin-left:0;">A</span>调整
+                    </button>
+                    <button id="mode-box" class="btn btn-ghost text-xs" style="min-width:auto; padding:3px 12px; font-size:11px; border:none; border-radius:var(--radius-md);">
+                        <span class="kbd" style="margin-right:3px; margin-left:0;">R</span>画框
+                    </button>
+                    <button id="mode-polygon" class="btn btn-ghost text-xs" style="min-width:auto; padding:3px 12px; font-size:11px; border:none; border-radius:var(--radius-md);">
+                        <span class="kbd" style="margin-right:3px; margin-left:0;">P</span>多边形
+                    </button>
+                    <button id="mode-sam" class="btn btn-ghost text-xs" style="min-width:auto; padding:3px 12px; font-size:11px; border:none; border-radius:var(--radius-md);">
+                        <span class="kbd" style="margin-right:3px; margin-left:0;">S</span>SAM
+                    </button>
+                </div>
+                <div style="width:1px; height:14px; background:var(--border); opacity:0.4;"></div>
+                <span id="image-size" style="color:var(--text-2); font-family:'SF Mono','Cascadia Code',monospace; font-size:10px;">-</span>
+                <span id="zoom-level" style="color:var(--text-2); font-family:'SF Mono','Cascadia Code',monospace; font-size:10px; background:var(--bg-3); padding:1px 5px; border-radius:3px; cursor:pointer;"
+                    onclick="if(typeof fitImageToView==='function')fitImageToView()" title="点击适应屏幕">100%</span>
+                <span id="mode-hint" style="color:var(--accent); font-weight:600; font-size:11px;"></span>
+                <div class="flex-1"></div>
+                <div class="flex gap-3" style="color:var(--text-2); font-size:9px; opacity:0.5; letter-spacing:0.2px;">
+                    <span><span class="kbd">Space</span> 适配</span>
+                    <span><span class="kbd">1-9</span> 类别</span>
+                    <span><span class="kbd">Ctrl+Z/Y</span> 撤销/重做</span>
+                    <span><span class="kbd">?</span> 快捷键</span>
+                </div>
+            </div>
+
+            <div class="context-strip">
+                <div class="context-chip">
+                    <span class="context-dot"></span>
+                    <span>图片集</span>
+                    <strong id="quick-group-name">未选择</strong>
+                </div>
+                <div class="context-chip compact">
+                    <span>标注集</span>
+                    <strong id="quick-labelset-name">-</strong>
+                </div>
+                <div class="context-chip compact">
+                    <span>当前图片</span>
+                    <strong id="quick-image-name">-</strong>
+                </div>
+                <div class="context-chip compact">
+                    <span>Support</span>
+                    <strong id="quick-support-count">0</strong>
+                </div>
+            </div>
+
+            <!-- Canvas area -->
+            <div id="canvas-container" class="flex-1 overflow-hidden relative canvas-surface" style="min-height:0;">
+                <div id="konva-holder" style="width:100%; height:100%; overflow:hidden;"></div>
+                <div id="loading-overlay">
+                    <div class="loader-ring"></div>
+                    <div class="loader-text">加载中<span class="loader-dots"></span></div>
+                    <button id="loading-cancel-btn" class="btn btn-ghost" style="display:none; margin-top:6px; padding:4px 18px; font-size:11px; color:var(--text-2); border:1px solid rgba(255,255,255,0.15); border-radius:4px; cursor:pointer; transition:all 0.15s;">取消</button>
+                </div>
+
+                <!-- Empty state overlay -->
+                <div id="canvas-empty-state" class="canvas-empty-state">
+                    <div class="canvas-empty-state__inner">
+                        <div class="canvas-empty-state__icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7;">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        <h3 class="canvas-empty-state__title">尚未加载数据集</h3>
+                        <p class="canvas-empty-state__desc">选择一个数据集开始标注，或从数据管理中心浏览所有可用数据集。</p>
+                        <div class="canvas-empty-state__actions">
+                            <button class="btn btn-primary canvas-empty-state__btn" onclick="document.getElementById('dataset-manager-modal').style.display='flex'; if(typeof DatasetManager!=='undefined')DatasetManager.init();">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                                打开数据管理中心
+                            </button>
+                        </div>
+                        <div class="canvas-empty-state__hints">
+                            <span><kbd>M</kbd> 数据管理</span>
+                            <span><kbd>?</kbd> 快捷键帮助</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thumbnail strip -->
+            <div id="thumbnail-strip" style="height:56px; min-height:56px; background:var(--bg-1); border-top:1px solid var(--border);
+                display:flex; align-items:center; gap:2px; padding:0 8px; overflow-x:auto; overflow-y:hidden;
+                scrollbar-width:thin; scrollbar-color:var(--bg-3) transparent;">
+                <div id="thumb-container" style="display:flex; gap:3px; align-items:center; height:100%; white-space:nowrap;"></div>
+            </div>
+        </div>
+
+        <!-- ─── Right Sidebar ─── -->
+        <div id="right-sidebar" class="w-80 sidebar flex flex-col border-l soft-divider" style="min-width:310px; overflow-y:auto; display:flex !important; flex-direction:column !important;">
+
+            <!-- Class selector -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex items-center justify-between mb-1">
+                    <div class="section-title" style="margin:0;">类别</div>
+                    <button id="add-class-btn" class="btn btn-ghost" style="font-size:10px; padding:1px 6px;">+ 添加</button>
+                </div>
+                <select id="class-select" class="select-input" style="padding:3px 6px; font-size:11px;"></select>
+                <div id="class-list" class="grid grid-cols-2 gap-1 mt-1"></div>
+                <div id="add-class-form" class="mt-1.5 hidden">
+                    <div class="flex gap-1">
+                        <input type="text" id="new-class-name" placeholder="输入类别名称" class="select-input flex-1" style="font-size:11px;">
+                        <button id="add-class-ok" class="btn btn-primary" style="font-size:10px; padding:3px 8px;">确定</button>
+                        <button id="add-class-no" class="btn btn-ghost" style="font-size:10px; padding:3px 8px;">取消</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex items-center gap-2">
+                    <div class="section-title" style="margin:0;">显示</div>
+                    <select id="viz-mode" class="select-input flex-1" style="font-size:10px; padding:2px 4px;">
+                        <option value="both">边界 + BBox</option>
+                        <option value="boundary">仅轮廓</option>
+                        <option value="filled">填充 + 轮廓</option>
+                        <option value="mask">蒙版(仅填充)</option>
+                        <option value="bbox">仅 BBox</option>
+                        <option value="none">不显示</option>
+                    </select>
+                    <label class="flex items-center gap-1" style="color:var(--text-1); white-space:nowrap; font-size:10px; cursor:pointer;">
+                        <input id="viz-selected-only" type="checkbox" class="accent-[#7aa2ff]" style="width:12px; height:12px;">
+                        仅选中
+                    </label>
+                </div>
+            </div>
+
+            <!-- ═══ Step 1: CellposeSAM (Auto Segmentation) ═══ -->
+            <div class="border-b soft-divider panel-shell collapsed">
+                <div class="collapsible-header flex items-center justify-between px-3 py-1.5" onclick="this.parentElement.classList.toggle('collapsed')">
+                    <div class="flex items-center gap-1.5">
+                        <span class="collapse-arrow">▾</span>
+                        <div class="section-title" style="margin:0; font-size:12px;">① CellposeSAM</div>
+                    </div>
+                    <label class="flex items-center gap-1 text-xs" style="color:var(--text-1);" onclick="event.stopPropagation()">
+                        <input id="cellpose-visible" type="checkbox" checked class="accent-[#7aa2ff]"> 显示
+                    </label>
+                </div>
+                <div class="collapsible-body px-3 pb-2">
+                    <div class="flex gap-1">
+                        <input type="text" id="cellpose-diameters" value="30"
+                            placeholder="直径 (如 15,60,90)"
+                            class="select-input flex-1" style="font-size:11px; padding:3px 6px;"
+                            title="细胞直径(px), 多个用逗号分隔">
+                        <input type="color" id="cellpose-color" value="#00ff88"
+                            title="轮廓颜色" style="width:26px; height:26px; border:1px solid var(--border); border-radius:4px; cursor:pointer; padding:1px; background:var(--bg-3);">
+                    </div>
+                    <div class="flex gap-1 mt-1">
+                        <button id="cellpose-run-btn" class="btn btn-primary text-xs flex-1" style="padding:3px 0;">
+                            ⚡ 运行预览
+                        </button>
+                        <button id="cellpose-clear-btn" class="btn btn-ghost text-xs" style="padding:3px 6px;" title="清除">
+                            清除
+                        </button>
+                        <label class="flex items-center gap-1 text-xs" style="color:var(--text-1); white-space:nowrap;" onclick="event.stopPropagation()">
+                            <input id="cellpose-gpu" type="checkbox" checked class="accent-[#7aa2ff]"> GPU
+                        </label>
+                    </div>
+                    <div id="cellpose-accept-actions" class="flex gap-1 mt-1" style="display:none;">
+                        <button id="cellpose-accept-btn" class="btn text-xs flex-1" style="background:#22c55e; color:#fff; padding:3px 0;">
+                            ✓ 全部保存到标注
+                        </button>
+                        <button id="cellpose-reject-btn" class="btn btn-ghost text-xs flex-1" style="padding:3px 0;">
+                            ✗ 放弃
+                        </button>
+                    </div>
+                    <div id="cellpose-status" class="text-xs" style="color:var(--text-2); min-height:14px; margin-top:2px; line-height:1.3;"></div>
+                    <div class="mt-2 rounded-md border p-2" style="border-color:var(--border); background:rgba(255,255,255,0.02);">
+                        <div class="flex items-center justify-between">
+                            <div class="section-title" style="margin:0; font-size:11px;">批量分割</div>
+                            <span class="tag" style="font-size:9px">Batch</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 mt-1">
+                            <div>
+                                <div class="text-[10px] mb-1" style="color:var(--text-2);">起始图片</div>
+                                <select id="cellpose-batch-start" class="select-input" style="font-size:11px; padding:3px 6px;"></select>
+                            </div>
+                            <div>
+                                <div class="text-[10px] mb-1" style="color:var(--text-2);">结束图片</div>
+                                <select id="cellpose-batch-end" class="select-input" style="font-size:11px; padding:3px 6px;"></select>
+                            </div>
+                        </div>
+                        <div class="flex gap-1 mt-1">
+                            <button id="cellpose-batch-all-btn" class="btn btn-ghost text-xs flex-1" style="padding:3px 0;">全量</button>
+                            <button id="cellpose-batch-tail-btn" class="btn btn-ghost text-xs flex-1" style="padding:3px 0;">从当前到末尾</button>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 mt-1 text-xs" style="color:var(--text-1);">
+                            <label class="flex items-center gap-1" onclick="event.stopPropagation()">
+                                <input id="cellpose-batch-skip-existing" type="checkbox" checked class="accent-[#7aa2ff]">
+                                跳过已有标注
+                            </label>
+                            <label class="flex items-center gap-1" onclick="event.stopPropagation()">
+                                <input id="cellpose-batch-overwrite-existing" type="checkbox" class="accent-[#7aa2ff]">
+                                覆盖已有标注
+                            </label>
+                        </div>
+                        <button id="cellpose-batch-run-btn" class="btn btn-primary text-xs w-full mt-2" style="padding:5px 0;">
+                            一键批量分割
+                        </button>
+                        <div class="flex gap-1 mt-1">
+                            <button id="cellpose-batch-cancel-btn" class="btn text-xs flex-1" style="padding:5px 0; display:none; background:linear-gradient(180deg,#ef4444,#dc2626); color:#fff; border:1px solid rgba(239,68,68,0.4); border-radius:6px; font-weight:600; transition:all .2s;" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">
+                                ⏹ 停止分割
+                            </button>
+                            <button id="cellpose-batch-save-btn" class="btn text-xs flex-1" style="padding:5px 0; background:linear-gradient(180deg,#22c55e,#16a34a); color:#fff; border:1px solid rgba(34,197,94,0.4); border-radius:6px; font-weight:600; display:none; transition:all .2s;" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">
+                                ✓ 保存结果
+                            </button>
+                            <button id="cellpose-batch-discard-btn" class="btn text-xs flex-1" style="padding:5px 0; background:rgba(75,34,48,0.5); color:#ffb4bc; border:1px solid rgba(75,34,48,0.8); border-radius:6px; font-weight:600; display:none; transition:all .2s;" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">
+                                ✗ 放弃结果
+                            </button>
+                        </div>
+                        <div class="batch-progress-shell">
+                            <div class="batch-progress-header">
+                                <span class="batch-progress-title">批量执行进度</span>
+                                <span id="cellpose-batch-percent" class="batch-progress-percent">0%</span>
+                            </div>
+                            <div class="batch-progress-track">
+                                <div id="cellpose-batch-bar" class="batch-progress-fill"></div>
+                            </div>
+                            <div class="batch-progress-meta">
+                                <span id="cellpose-batch-progress">0 / 0</span>
+                                <span id="cellpose-batch-current" style="display:none;">等待启动</span>
+                            </div>
+                            <div class="batch-stats-bar">
+                                <div id="cellpose-batch-saved-bar" class="batch-stats-seg saved" style="width:0%"></div>
+                                <div id="cellpose-batch-skipped-bar" class="batch-stats-seg skipped" style="width:0%"></div>
+                                <div id="cellpose-batch-failed-bar" class="batch-stats-seg failed" style="width:0%"></div>
+                            </div>
+                            <div class="batch-stats-legend">
+                                <div class="batch-stat-chip">
+                                    <span class="batch-stat-dot saved"></span>
+                                    <span id="cellpose-batch-saved-text">保存 0</span>
+                                </div>
+                                <div class="batch-stat-chip">
+                                    <span class="batch-stat-dot skipped"></span>
+                                    <span id="cellpose-batch-skipped-text">跳过 0</span>
+                                </div>
+                                <div class="batch-stat-chip">
+                                    <span class="batch-stat-dot failed"></span>
+                                    <span id="cellpose-batch-failed-text">失败 0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="cellpose-batch-status" class="text-xs mt-1 section-note"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Step 2: SAM3 Prediction ═══ -->
+            <div class="border-b soft-divider panel-shell">
+                <div class="collapsible-header flex items-center justify-between px-3 py-1.5" onclick="this.parentElement.classList.toggle('collapsed')">
+                    <div class="flex items-center gap-1.5">
+                        <span class="collapse-arrow">▾</span>
+                        <div class="section-title" style="margin:0; font-size:12px;">② SAM3 预测</div>
+                    </div>
+                    <span class="tag" style="font-size:9px">SAM3</span>
+                </div>
+                <div class="collapsible-body px-3 pb-2">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <label class="sam-strategy-label">
+                            <input type="checkbox" id="sam-strat-grounding" class="sam-strat-cb accent-[#7aa2ff]" value="grounding" checked>
+                            <span>Grounding (框+类名)</span>
+                        </label>
+                        <label class="sam-strategy-label">
+                            <input type="checkbox" id="sam-strat-13points" class="sam-strat-cb accent-[#7aa2ff]" value="13points">
+                            <span>13点+框 (SAM2)</span>
+                        </label>
+                        <label class="sam-strategy-label">
+                            <input type="checkbox" id="sam-strat-box-inst" class="sam-strat-cb accent-[#7aa2ff]" value="box_inst">
+                            <span>纯框 (SAM2)</span>
+                        </label>
+                    </div>
+                    <div id="sam-text-row" class="mt-1">
+                        <input type="text" id="sam-text-prompt" value=""
+                            placeholder="文本, 逗号分隔多个 (如 cell, nucleus)"
+                            class="select-input" style="font-size:11px; width:100%; padding:3px 6px;">
+                    </div>
+                    <div class="flex gap-1 mt-1">
+                        <button id="sam-batch-btn" class="btn btn-primary text-xs flex-1" style="padding:3px 0;">
+                            ⚡ BBox预测
+                        </button>
+                        <button id="sam-text-run" class="btn text-xs flex-1" style="background:#8b5cf6; color:#fff; padding:3px 0;" disabled>
+                            ▶ 纯文本预测
+                        </button>
+                    </div>
+                    <div id="sam-preview-actions" class="flex gap-1 mt-1" style="display:none;">
+                        <button id="sam-accept-btn" class="btn text-xs flex-1" style="background:#22c55e; color:#fff; padding:3px 0;">
+                            ✓ 接受
+                        </button>
+                        <button id="sam-reject-btn" class="btn btn-ghost text-xs flex-1" style="padding:3px 0;">
+                            ✗ 放弃
+                        </button>
+                    </div>
+                    <div id="sam-status" class="text-xs" style="color:var(--text-2); min-height:14px; margin-top:2px; line-height:1.3;"></div>
+                </div>
+            </div>
+
+            <!-- ═══ Step 3: Smart Classification ═══ -->
+            <div class="border-b soft-divider panel-shell">
+                <div class="collapsible-header flex items-center justify-between px-3 py-1.5" onclick="this.parentElement.classList.toggle('collapsed')">
+                    <div class="flex items-center gap-1.5">
+                        <span class="collapse-arrow">▾</span>
+                        <div class="section-title" style="margin:0; font-size:12px;">③ 智能分类</div>
+                    </div>
+                    <select id="classify-method" class="fewshot-subtle-select" style="width:auto; min-width:80px; font-size:9px; padding:1px 4px;" onclick="event.stopPropagation()">
+                        <option value="hybrid">Hybrid</option>
+                        <option value="fewshot">Few-shot</option>
+                    </select>
+                </div>
+                <div class="collapsible-body px-3 pb-2">
+                    <div class="fewshot-card">
+                        <!-- Support summary + actions (compact toolbar) -->
+                        <div id="fewshot-support-summary" class="fewshot-support-summary">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:4px;">
+                                <span class="fewshot-summary-hint">Support 样本</span>
+                                <div style="display:flex; align-items:center; gap:2px;">
+                                    <span id="fewshot-support-header-count" style="color:var(--text-2); font-size:9px;">(0)</span>
+                                    <button id="fewshot-manage-btn" class="sc-icon-btn" title="管理 support 样本">☰</button>
+                                    <button id="fewshot-save-supports-btn" class="sc-icon-btn" title="保存 support" style="color:var(--success);">💾</button>
+                                </div>
+                            </div>
+                            <div id="fewshot-support-counts" class="fewshot-support-counts"></div>
+                        </div>
+                        <div class="fewshot-actions">
+                            <button id="fewshot-add-selected-btn" class="btn btn-primary fewshot-mini-btn" title="将当前选中标注加入 support">+ 当前</button>
+                            <button id="fewshot-remove-selected-btn" class="btn btn-ghost fewshot-mini-btn" title="从 support 中移除当前选中">− 当前</button>
+                            <button id="fewshot-clear-btn" class="btn btn-ghost fewshot-mini-btn" title="清空全部 support" style="min-width:40px; flex:0;">清空</button>
+                        </div>
+
+                        <!-- Support manager (inline, collapsed by default) -->
+                        <div id="fewshot-support-popover" class="fewshot-popover collapsed-panel">
+                            <div class="fewshot-popover-header">
+                                <span>Support 样本管理</span>
+                                <button id="fewshot-popover-close" class="fewshot-popover-close">×</button>
+                            </div>
+                            <div class="flex items-center gap-2 px-2 py-1">
+                                <select id="fewshot-support-filter" class="fewshot-subtle-select" style="flex:1;">
+                                    <option value="all">全部类别</option>
+                                </select>
+                            </div>
+                            <div id="fewshot-support-list" class="fewshot-support-list"></div>
+                        </div>
+
+                        <div class="fewshot-divider"></div>
+
+                        <!-- Hybrid / Size Refiner settings -->
+                        <details id="hybrid-settings-collapsible" style="margin:2px 0;">
+                            <summary class="sc-details-summary">Size Refiner & 高级设置 ▸</summary>
+                            <div style="margin-top:4px; display:flex; flex-direction:column; gap:4px;">
+                                <label class="flex items-center gap-1" style="font-size:10px; color:var(--text-1); cursor:pointer;">
+                                    <input id="hybrid-enable-size-refiner" type="checkbox" checked class="accent-[#7aa2ff]" style="width:12px; height:12px;">
+                                    Size Refiner
+                                </label>
+                                <div class="grid grid-cols-2 gap-2" style="font-size:9px; color:var(--text-2);">
+                                    <div>
+                                        <div>触发边距</div>
+                                        <input id="hybrid-sr-margin" type="number" step="0.01" value="0.12" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                    </div>
+                                    <div>
+                                        <div>最小分离度</div>
+                                        <input id="hybrid-sr-separation" type="number" step="0.1" value="1.0" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                    </div>
+                                    <div>
+                                        <div>分数缩放</div>
+                                        <input id="hybrid-sr-scale" type="number" step="0.01" value="0.06" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                    </div>
+                                    <div>
+                                        <div>最大调整</div>
+                                        <input id="hybrid-sr-max-adjust" type="number" step="0.01" value="0.08" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Hybrid text prompt settings -->
+                        <details id="hybrid-prompt-collapsible" style="margin:2px 0;">
+                            <summary class="sc-details-summary">文本提示 (Text Prompts) ▸</summary>
+                            <div style="margin-top:4px; display:flex; flex-direction:column; gap:6px;">
+                                <div style="font-size:9px; color:var(--text-2);">
+                                    模板（<code>{name}</code> 占位，留空用默认）
+                                </div>
+                                <input id="hybrid-prompt-template" type="text"
+                                    placeholder="a photomicrograph of a {name} cell in BALF sample"
+                                    class="select-input" style="font-size:9px; padding:3px 5px;">
+                                <div id="hybrid-text-prompts" style="display:flex; flex-direction:column; gap:4px;"></div>
+                                <button id="hybrid-prompt-clear-btn" class="btn btn-ghost" style="font-size:9px; padding:2px 6px;">清空描述词</button>
+                            </div>
+                        </details>
+
+                        <!-- Prompt ensembles (for legacy few-shot) -->
+                        <details id="fewshot-prompt-collapsible" style="margin:2px 0; display:none;">
+                            <summary class="sc-details-summary">文本提示 (Prompt Ensembles) ▸</summary>
+                            <div style="margin-top:4px;">
+                                <label class="flex items-center gap-1 mb-1" style="font-size:10px; color:var(--text-1); cursor:pointer;">
+                                    <input id="fewshot-use-prompts" type="checkbox" class="accent-[#7aa2ff]" style="width:12px; height:12px;">
+                                    启用文本提示
+                                </label>
+                                <div id="fewshot-prompt-options" style="display:none;">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <select id="fewshot-prompt-mode" class="fewshot-subtle-select" style="flex:1;">
+                                            <option value="auto">自动生成</option>
+                                            <option value="custom">自定义</option>
+                                        </select>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2 mb-1" style="font-size:9px; color:var(--text-2);">
+                                        <div>
+                                            <div>图像权重</div>
+                                            <input id="fewshot-image-proto-weight" type="number" step="0.1" value="0.5" min="0" max="1" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                        </div>
+                                        <div>
+                                            <div>文本权重</div>
+                                            <input id="fewshot-text-proto-weight" type="number" step="0.1" value="0.5" min="0" max="1" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                        </div>
+                                    </div>
+                                    <div id="fewshot-custom-prompts" style="display:none;"></div>
+                                </div>
+                                <div id="fewshot-prompt-editor" style="display:flex; flex-direction:column; gap:4px; margin-top:4px;"></div>
+                                <div class="flex gap-1 mt-1">
+                                    <button id="fewshot-prompt-reset-btn" class="btn btn-ghost text-xs flex-1" style="padding:2px 0; font-size:9px;">恢复默认</button>
+                                </div>
+                                <div id="basic-temp-row" style="display:none;">
+                                    <div class="section-title" style="margin-bottom:2px; font-size:9px;">Temperature</div>
+                                    <input id="fewshot-temperature" type="number" step="0.1" value="1.0" min="0.01" class="select-input" style="font-size:9px; padding:2px 4px; width:80px;">
+                                </div>
+                            </div>
+                        </details>
+
+                        <div class="fewshot-divider"></div>
+
+                        <!-- Evaluation config (compact) -->
+                        <div id="hybrid-eval-row" class="sc-eval-config">
+                            <div style="display:flex; gap:4px; align-items:flex-end;">
+                                <div style="flex:1;">
+                                    <div class="sc-label">评估范围</div>
+                                    <select id="fewshot-eval-scope" class="fewshot-subtle-select">
+                                        <option value="all">全部图片</option>
+                                        <option value="current_to_end">当前→末尾</option>
+                                        <option value="range">自定义</option>
+                                    </select>
+                                </div>
+                                <div style="width:55px;">
+                                    <div class="sc-label">起始</div>
+                                    <select id="fewshot-range-start" class="fewshot-subtle-select"></select>
+                                </div>
+                                <div style="width:55px;">
+                                    <div class="sc-label">结束</div>
+                                    <select id="fewshot-range-end" class="fewshot-subtle-select"></select>
+                                </div>
+                                <div style="width:60px;">
+                                    <div class="sc-label">上限</div>
+                                    <input id="hybrid-max-images" type="number" min="1" placeholder="全部" class="select-input" style="font-size:9px; padding:2px 4px;">
+                                </div>
+                            </div>
+                            <div id="fewshot-range-hint" class="fewshot-inline-meta" style="margin-top:2px;"></div>
+                        </div>
+                        <div style="display:none;">
+                            <input id="fewshot-max-images" type="number" min="1" placeholder="留空=全部">
+                        </div>
+
+                        <!-- Action buttons (compact row) -->
+                        <div class="sc-action-row">
+                            <button id="fewshot-run-current-btn" class="btn btn-primary text-xs" style="flex:1; padding:5px 0;">当前图分类</button>
+                            <button id="fewshot-eval-subset-btn" class="btn btn-secondary text-xs" style="flex:1; padding:5px 0;">批量评估</button>
+                            <button id="fewshot-batch-classify-btn" class="btn text-xs sc-btn-warn" style="flex:1; padding:5px 0;">批量保存</button>
+                        </div>
+                        <div id="fewshot-status" class="text-xs" style="color:var(--text-2); min-height:14px; line-height:1.3; margin-top:4px;"></div>
+
+                        <!-- Results panel -->
+                        <div id="fewshot-result-panel" class="fewshot-hidden">
+                            <div class="fewshot-divider"></div>
+                            <div id="fewshot-metrics" class="fewshot-metric-grid"></div>
+                            <div id="fewshot-result-list" class="fewshot-result-list mt-1"></div>
+                            <div id="fewshot-preview-actions" class="flex gap-1 mt-1" style="display:none;">
+                                <button id="fewshot-apply-btn" class="btn btn-primary text-xs flex-1" style="padding:4px 0;">应用结果</button>
+                                <button id="fewshot-revert-btn" class="btn btn-ghost text-xs flex-1" style="padding:4px 0;">撤销</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ Step 4: Research Evaluation ═══ -->
+            <div class="border-b soft-divider panel-shell collapsed">
+                <div class="collapsible-header flex items-center justify-between px-3 py-1.5" onclick="this.parentElement.classList.toggle('collapsed')">
+                    <div class="flex items-center gap-1.5">
+                        <span class="collapse-arrow">▾</span>
+                        <div class="section-title" style="margin:0; font-size:12px;">④ 科研验证</div>
+                    </div>
+                    <span class="tag" style="font-size:9px">Gold Eval</span>
+                </div>
+                <div class="collapsible-body px-3 pb-2">
+                    <div class="sc-research-card">
+                        <!-- Row 1: Gold label set + max images -->
+                        <div style="display:flex; gap:6px; align-items:flex-end;">
+                            <div style="flex:1;">
+                                <div class="sc-label">金标准标注集</div>
+                                <select id="eval-gold-labelset" class="select-input" style="font-size:10px; padding:3px 6px;"></select>
+                            </div>
+                            <div style="width:70px;">
+                                <div class="sc-label">图片上限</div>
+                                <input id="eval-max-images" type="number" min="1" placeholder="全部" class="select-input" style="font-size:10px; padding:3px 6px;">
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Segment config (collapsible) -->
+                        <details style="margin-top:6px;">
+                            <summary class="sc-details-summary">分割评估设置 ▸</summary>
+                            <div style="display:flex; gap:6px; margin-top:4px; align-items:flex-end;">
+                                <div style="flex:1;">
+                                    <div class="sc-label">分割方法</div>
+                                    <select id="eval-segment-method" class="select-input" style="font-size:10px; padding:3px 6px;">
+                                        <option value="cellpose">CellposeSAM</option>
+                                        <option value="sam3">SAM3</option>
+                                    </select>
+                                </div>
+                                <div style="flex:1;">
+                                    <div class="sc-label">SAM3 Prompt 标注集</div>
+                                    <select id="eval-prompt-labelset" class="select-input" style="font-size:10px; padding:3px 6px;"></select>
+                                </div>
+                            </div>
+                        </details>
+
+                        <!-- Action buttons -->
+                        <div class="sc-action-row" style="margin-top:8px;">
+                            <button id="eval-classify-gold-btn" class="btn btn-primary text-xs" style="flex:1; padding:5px 0;" title="使用 Hybrid Adaptive 模型评估分类准确度">分类评估</button>
+                            <button id="eval-segment-gold-btn" class="btn btn-secondary text-xs" style="flex:1; padding:5px 0;" title="使用所选分割方法评估分割质量">分割评估</button>
+                        </div>
+
+                        <!-- Results area -->
+                        <div id="eval-status" class="sc-eval-result" style="margin-top:6px; min-height:20px;"></div>
+                        <div id="eval-result-detail" style="display:none; margin-top:6px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Annotation list -->
+            <div class="px-3 py-1.5 border-b soft-divider panel-shell">
+                <div class="flex items-center justify-between">
+                    <div class="section-title" style="margin:0;">标注列表</div>
+                    <div class="flex items-center gap-2">
+                        <span id="ann-count" style="color:var(--text-2); font-size:10px; font-variant-numeric:tabular-nums;">0</span>
+                        <button id="clear-all-btn" class="btn btn-ghost" style="font-size:9px; padding:1px 5px;" title="清空全部标注">清空</button>
+                    </div>
+                </div>
+                <button id="delete-btn" class="btn btn-danger w-full mt-1 hidden" style="font-size:11px; padding:3px 0;">删除选中 <span class="kbd">Del</span></button>
+                <button id="batch-add-support-btn" class="btn btn-secondary w-full mt-1 hidden" style="font-size:11px; padding:3px 0; border-color:var(--accent); color:var(--accent);">+ 选中添加为 Support</button>
+                <div id="adjust-actions" class="flex gap-1.5 mt-1 hidden">
+                    <button id="adjust-confirm" class="btn btn-primary flex-1" style="font-size:11px; padding:3px 0;">确认 <span class="kbd">⏎</span></button>
+                    <button id="adjust-cancel" class="btn btn-ghost flex-1" style="font-size:11px; padding:3px 0;">取消 <span class="kbd">Esc</span></button>
+                </div>
+            </div>
+            <div id="annotation-list" class="flex-1 overflow-y-auto p-1.5 space-y-0.5" style="min-height:100px;"></div>
+        </div>
+
+    </div>
+
+    <!-- ─── Footer Status Bar ─── -->
+    <div class="status-bar">
+        <div class="status-item">
+            <span id="footer-mode">选择</span>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item">
+            <span id="footer-image">-</span>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item">
+            <span id="footer-anns">标注: 0</span>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item">
+            <span id="footer-undo-redo" style="color:var(--accent); display:none;">撤销:0 重做:0</span>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item">
+            <span id="footer-dirty" style="color:var(--warn); display:none;">● 未保存</span>
+            <span id="footer-saved" style="color:var(--success); display:none;">✓ 已保存</span>
+        </div>
+        <div class="flex-1"></div>
+        <div class="status-item" style="cursor:pointer;" onclick="if(typeof toggleShortcutHelp==='function')toggleShortcutHelp()">
+            <span style="color:var(--text-2);">快捷键</span>
+            <kbd>?</kbd>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item dm-entry-btn" style="cursor:pointer;padding:3px 12px;border-radius:6px;background:linear-gradient(135deg,rgba(107,147,255,0.12),rgba(107,147,255,0.04));border:1px solid rgba(107,147,255,0.2);transition:all .2s;" onmouseenter="this.style.background='linear-gradient(135deg,rgba(107,147,255,0.25),rgba(107,147,255,0.1))';this.style.borderColor='rgba(107,147,255,0.4)'" onmouseleave="this.style.background='linear-gradient(135deg,rgba(107,147,255,0.12),rgba(107,147,255,0.04))';this.style.borderColor='rgba(107,147,255,0.2)'" onclick="document.getElementById('dataset-manager-modal').style.display='flex'; if(typeof DatasetManager!=='undefined')DatasetManager.init();">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="margin-right:4px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span style="color:var(--accent);font-weight:600;font-size:11px;">数据管理</span>
+            <kbd style="margin-left:4px;">M</kbd>
+        </div>
+        <div class="sep"></div>
+        <div class="status-item">
+            <span id="footer-autosave" class="auto-save-indicator">自动保存</span>
+        </div>
+    </div>
+
+    <!-- ─── Shortcut Help Overlay ─── -->
+    <div id="shortcut-help-overlay" onclick="if(event.target===this)toggleShortcutHelp()">
+        <div class="shortcut-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <h2 style="font-size:16px;font-weight:700;color:var(--text-0);margin:0;">键盘快捷键</h2>
+                <button onclick="toggleShortcutHelp()" style="background:none;border:none;color:var(--text-2);font-size:18px;cursor:pointer;">✕</button>
+            </div>
+            <h3>工具切换</h3>
+            <div class="shortcut-row"><span class="sk">选择工具</span><kbd>V</kbd></div>
+            <div class="shortcut-row"><span class="sk">调整工具</span><kbd>A</kbd></div>
+            <div class="shortcut-row"><span class="sk">画框工具</span><kbd>R</kbd></div>
+            <div class="shortcut-row"><span class="sk">多边形工具</span><kbd>P</kbd></div>
+            <div class="shortcut-row"><span class="sk">SAM分割</span><kbd>S</kbd></div>
+            <h3>编辑操作</h3>
+            <div class="shortcut-row"><span class="sk">撤销</span><kbd>Ctrl+Z</kbd></div>
+            <div class="shortcut-row"><span class="sk">重做</span><kbd>Ctrl+Y / Ctrl+Shift+Z</kbd></div>
+            <div class="shortcut-row"><span class="sk">删除选中</span><kbd>Delete / Backspace</kbd></div>
+            <div class="shortcut-row"><span class="sk">全选</span><kbd>Ctrl+A</kbd></div>
+            <div class="shortcut-row"><span class="sk">复制标注</span><kbd>Ctrl+C</kbd></div>
+            <div class="shortcut-row"><span class="sk">粘贴标注</span><kbd>Ctrl+V</kbd></div>
+            <div class="shortcut-row"><span class="sk">复制并偏移</span><kbd>Ctrl+D</kbd></div>
+            <div class="shortcut-row"><span class="sk">取消选择/退出</span><kbd>Esc</kbd></div>
+            <div class="shortcut-row"><span class="sk">完成多边形</span><kbd>Enter / 双击</kbd></div>
+            <div class="shortcut-row"><span class="sk">回退上一点</span><kbd>Backspace (多边形绘制中)</kbd></div>
+            <h3>图片导航</h3>
+            <div class="shortcut-row"><span class="sk">上/下一张</span><kbd>← / →</kbd></div>
+            <div class="shortcut-row"><span class="sk">跳到未标注图像</span><kbd>Ctrl+← / Ctrl+→</kbd></div>
+            <div class="shortcut-row"><span class="sk">第一张/最后一张</span><kbd>Home / End</kbd></div>
+            <h3>视图控制</h3>
+            <div class="shortcut-row"><span class="sk">适应屏幕</span><kbd>Ctrl+0</kbd></div>
+            <div class="shortcut-row"><span class="sk">实际像素</span><kbd>Ctrl+1</kbd></div>
+            <div class="shortcut-row"><span class="sk">放大/缩小</span><kbd>Ctrl+= / Ctrl+-</kbd></div>
+            <div class="shortcut-row"><span class="sk">平移画布</span><kbd>按住 Space+拖拽</kbd></div>
+            <div class="shortcut-row"><span class="sk">跳转已标记图像</span><kbd>Ctrl+Shift+←→</kbd></div>
+            <div class="shortcut-row"><span class="sk">标记/取消标记</span><kbd>G</kbd></div>
+            <div class="shortcut-row"><span class="sk">全屏画布</span><kbd>F</kbd></div>
+            <h3>类别切换</h3>
+            <div class="shortcut-row"><span class="sk">选择类别1-9</span><kbd>1-9</kbd></div>
+            <h3>保存与操作</h3>
+            <div class="shortcut-row"><span class="sk">保存</span><kbd>Ctrl+S</kbd></div>
+            <div class="shortcut-row"><span class="sk">保存并下一张</span><kbd>Ctrl+Enter</kbd></div>
+            <div class="shortcut-row"><span class="sk">运行Cellpose</span><kbd>Ctrl+G</kbd></div>
+            <h3>系统</h3>
+            <div class="shortcut-row"><span class="sk">快捷键帮助</span><kbd>?</kbd></div>
+            <div class="shortcut-row"><span class="sk">数据管理</span><kbd>M</kbd></div>
+        </div>
+    </div>
+
+    <!-- ─── Data Management Modal ─── -->
+    <div id="dataset-manager-modal" style="display:none; position:fixed; inset:0; z-index:9000;
+        background:rgba(0,0,0,0.65); backdrop-filter:blur(8px);
+        align-items:center; justify-content:center;">
+        <div class="dm-modal-container" style="background:var(--bg-1); border:1px solid var(--border); border-radius:var(--radius-xl);
+            width:95%; max-width:1300px; height:88vh; display:flex; flex-direction:column; overflow:hidden;
+            box-shadow:0 24px 80px rgba(0,0,0,0.6), 0 0 1px rgba(255,255,255,0.1);">
+
+            <!-- Modal Header -->
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 24px;
+                border-bottom:1px solid var(--border);
+                background:linear-gradient(90deg, rgba(20,24,40,0.95), rgba(26,31,52,0.9));">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:8px; padding:5px 14px; border-radius:var(--radius-lg); background:linear-gradient(135deg, rgba(107,147,255,0.12), rgba(167,139,250,0.08)); border:1px solid rgba(107,147,255,0.15);">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <h2 style="font-size:15px; font-weight:700; color:var(--text-0);">数据管理中心</h2>
+                    </div>
+                    <span class="tag" style="font-size:9px;">Enterprise</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <div class="dm-tab-group" style="display:flex; gap:2px; background:var(--bg-0); padding:3px; border-radius:var(--radius-lg); border:1px solid var(--border);">
+                        <button id="dm-tab-datasets" class="dm-tab-btn active" onclick="switchDMTab('datasets')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                            数据集
+                        </button>
+                        <button id="dm-tab-projects" class="dm-tab-btn" onclick="switchDMTab('projects')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                            项目
+                        </button>
+                        <button id="dm-tab-stats" class="dm-tab-btn" onclick="switchDMTab('stats')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            统计
+                        </button>
+                        <button id="dm-tab-evaluate" class="dm-tab-btn" onclick="switchDMTab('evaluate')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            评估
+                        </button>
+                        <button id="dm-tab-export" class="dm-tab-btn" onclick="switchDMTab('export')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            导出
+                        </button>
+                        <button id="dm-tab-audit" class="dm-tab-btn" onclick="switchDMTab('audit')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            审计
+                        </button>
+                    </div>
+                    <div style="width:1px; height:20px; background:var(--border); margin:0 4px;"></div>
+                    <button onclick="document.getElementById('dataset-manager-modal').style.display='none'"
+                        class="dm-close-btn" title="关闭">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div id="dm-content" style="flex:1; overflow-y:auto; padding:24px; background:linear-gradient(180deg, rgba(255,255,255,0.008), transparent);">
+                <div id="dm-loading" style="text-align:center; padding:40px; color:var(--text-2);">
+                    加载中...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    console.log('%c[SIDEBAR GUARD v0408M] 侧边栏保护已加载', 'color:lime;font-size:14px;font-weight:bold;');
+    (function() {
+        var ids = ['left-sidebar', 'right-sidebar'];
+        function forceShow() {
+            ids.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var cs = getComputedStyle(el);
+                if (cs.display === 'none' || el.style.display === 'none') {
+                    el.style.setProperty('display', 'flex', 'important');
+                    el.style.setProperty('flex-direction', 'column', 'important');
+                    console.warn('[SIDEBAR GUARD] 恢复了被隐藏的侧边栏: ' + id + ' (原值: ' + el.style.display + ')');
+                }
+            });
+        }
+        forceShow();
+        var observer = new MutationObserver(function(mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+                var el = mutations[i].target;
+                if (el.id === 'left-sidebar' || el.id === 'right-sidebar') {
+                    if (el.style.display === 'none') {
+                        el.style.setProperty('display', 'flex', 'important');
+                        el.style.setProperty('flex-direction', 'column', 'important');
+                        console.warn('[SIDEBAR GUARD] 拦截隐藏操作: ' + el.id);
+                        console.trace('[SIDEBAR GUARD] 调用栈:');
+                    }
+                }
+            }
+        });
+        ids.forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) observer.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+        });
+        setInterval(forceShow, 1000);
+    })();
+    </script>
+    <script src="/static/app.js?v=20260409F"></script>
+    <script src="/static/data-manager.js?v=20260419A"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gjw-mcp": {
+      "command": "/home/xut/.local/bin/node",
+      "args": ["/home/xut/csclip/gjw/server.js"]
+    }
+  }
+}

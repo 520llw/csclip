@@ -1,0 +1,551 @@
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+import http from "node:http";
+
+const PORT = parseInt(process.env.XIAOHAHA_MCP_PORT || "3456", 10);
+
+let waitingResolve = null;
+const messageQueue = [];
+const aiResponses = [];
+let lastAiResponseId = 0;
+
+// ── MCP Server ──────────────────────────────────────────────
+const mcpServer = new McpServer({
+  name: "xiaohaha-message",
+  version: "1.0.0",
+});
+
+mcpServer.tool(
+  "check_messages",
+  "Check for new user messages from Xiaohaha Chat. Call this after completing every response to wait for the next user instruction.",
+  {
+    ai_response: z
+      .string()
+      .optional()
+      .describe("Your response text to display in the chat UI before waiting for the next message"),
+  },
+  async ({ ai_response }) => {
+    if (ai_response) {
+      lastAiResponseId++;
+      aiResponses.push({
+        id: lastAiResponseId,
+        text: ai_response,
+        time: new Date().toLocaleTimeString(),
+      });
+    }
+
+    const prompt = (payload) => {
+      const text = typeof payload === "string" ? payload : payload?.text || "";
+      const images = Array.isArray(payload?.images) ? payload.images : [];
+      const content = [
+        {
+          type: "text",
+          text: `用户发来新消息:\n\n${text || "(无文字，见下方图片)"}\n\n请根据上述消息（含图片时请结合图片内容）继续工作。完成后再次调用 check_messages 工具，将你的回复内容传入 ai_response 参数。`,
+        },
+      ];
+      images.forEach((img) => {
+        const mime = img.mime || "image/png";
+        let data = img.data || "";
+        if (data.startsWith("data:")) {
+          data = data.replace(/^data:[^;]+;base64,/, "");
+        }
+        content.push({
+          type: "image",
+          data,
+          mimeType: mime,
+        });
+      });
+      return { content };
+    };
+
+    if (messageQueue.length > 0) {
+      return prompt(messageQueue.shift());
+    }
+
+    const msg = await new Promise((resolve) => {
+      waitingResolve = resolve;
+    });
+    return prompt(msg);
+  }
+);
+
+const transport = new StdioServerTransport();
+await mcpServer.connect(transport);
+console.error("[xiaohaha-mcp] MCP server connected");
+
+// ── Chat HTML ───────────────────────────────────────────────
+const HTML = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小叶子</title>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --bg-hover: #30363d;
+      --border: rgba(255,255,255,0.08);
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-muted: #6e7681;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --accent-glow: rgba(88,166,255,0.2);
+      --success: #3fb950;
+      --danger: #f85149;
+      --user-bubble: linear-gradient(135deg, #238636, #2ea043);
+      --ai-bubble: #21262d;
+      --radius: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      padding: 16px 24px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px;
+      flex-shrink: 0;
+      backdrop-filter: blur(20px);
+    }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--user-bubble);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+    .header-info { flex: 1; }
+    .header-info h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .header-info p { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; padding: 6px 14px; border-radius: 20px;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--danger);
+      transition: background 0.3s ease;
+    }
+    .status-pill.waiting { background: rgba(63,185,80,0.15); border-color: rgba(63,185,80,0.35); color: var(--success); }
+    .status-pill.waiting .status-dot { background: var(--success); animation: blink 1.5s infinite; }
+    .status-pill.connected { background: var(--bg-tertiary); color: var(--text-secondary); }
+    .status-pill.connected .status-dot { background: var(--accent); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1; overflow-y: auto; padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+      scroll-behavior: smooth;
+    }
+    #messages::-webkit-scrollbar { width: 6px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+    #messages::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    .msg-row { display: flex; gap: 10px; animation: fadeIn 0.3s ease; }
+    .msg-row.user { flex-direction: row-reverse; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .avatar {
+      width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; margin-top: 2px;
+    }
+    .msg-row.user .avatar { background: var(--user-bubble); color: #fff; }
+    .msg-row.ai .avatar { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-secondary); }
+
+    .bubble {
+      max-width: 75%; padding: 12px 16px; border-radius: var(--radius);
+      font-size: 14px; line-height: 1.7; word-break: break-word; white-space: pre-wrap;
+    }
+    .msg-row.user .bubble {
+      background: var(--user-bubble); color: #fff;
+      border-bottom-right-radius: 6px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .msg-row.ai .bubble {
+      background: var(--ai-bubble); color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .bubble .time {
+      font-size: 10px; margin-top: 6px;
+      opacity: 0.5;
+    }
+
+    .empty-state {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      color: var(--text-muted); padding: 40px;
+    }
+    .empty-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: rgba(88,166,255,0.1);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+    .empty-icon .icon { width: 36px; height: 36px; color: var(--accent); }
+    .empty-state h3 { font-size: 16px; font-weight: 600; color: var(--text-secondary); }
+    .empty-state p { font-size: 13px; line-height: 1.8; text-align: center; }
+    .kbd {
+      display: inline-block; padding: 2px 7px; border-radius: 5px;
+      background: var(--bg-tertiary); border: 1px solid var(--border);
+      font-size: 11px; font-family: monospace; color: var(--text-secondary);
+    }
+
+    /* ── Input Area ── */
+    .input-area {
+      padding: 16px 24px 20px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .input-row {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .input-wrapper {
+      display: flex; align-items: flex-end; gap: 10px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 6px 6px 6px 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input-wrapper:focus-within {
+      border-color: rgba(88,166,255,0.5);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    #input {
+      flex: 1; padding: 10px 0; border: none; background: transparent;
+      color: var(--text-primary); font-size: 14px; outline: none;
+      resize: none; min-height: 24px; max-height: 120px;
+      font-family: var(--font); line-height: 1.5;
+    }
+    #input::placeholder { color: var(--text-muted); }
+    #sendBtn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--accent); color: white; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s ease;
+    }
+    #sendBtn:hover { background: var(--accent-hover); transform: scale(1.05); }
+    #sendBtn:active { transform: scale(0.95); }
+    #sendBtn svg { width: 18px; height: 18px; }
+
+    /* ── Image Input ── */
+    .img-add-btn {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      border: 1px solid var(--border); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .img-add-btn:hover {
+      background: var(--bg-hover); color: var(--accent);
+      border-color: rgba(88,166,255,0.4);
+    }
+    .img-add-btn svg { width: 18px; height: 18px; }
+    #imgInput { display: none; }
+    .img-previews {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; padding-top: 8px;
+      border-top: 1px solid var(--border); min-height: 0;
+    }
+    .img-previews:empty { display: none; }
+    .img-preview {
+      position: relative; width: 56px; height: 56px;
+      border-radius: 8px; overflow: hidden;
+      background: var(--bg-tertiary); border: 1px solid var(--border);
+    }
+    .img-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .img-preview .img-remove {
+      position: absolute; top: 2px; right: 2px;
+      width: 18px; height: 18px; border-radius: 4px;
+      background: rgba(0,0,0,0.6); color: #fff;
+      border: none; cursor: pointer; font-size: 12px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .img-preview .img-remove:hover { background: var(--danger); }
+    .bubble-img {
+      max-width: 200px; border-radius: 8px; margin-top: 6px;
+      border: 1px solid var(--border);
+    }
+    .icon { width: 1em; height: 1em; fill: currentColor; vertical-align: -0.15em; overflow: hidden; }
+  </style>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="icon-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></symbol>
+    <symbol id="icon-rocket" viewBox="0 0 24 24"><path d="M12 2c-1.5 0-3 .5-4.5 1.5l1.5 1.5H4v6h5l-2 4 5-5 5 5-2-4h5v-6h-5l1.5-1.5C15 2.5 13.5 2 12 2z"/></symbol>
+    <symbol id="icon-send" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></symbol>
+    <symbol id="icon-picture" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></symbol>
+    <symbol id="icon-robot" viewBox="0 0 24 24"><path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3zM7.5 11.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5S9.33 13 8.5 13s-1.5-.67-1.5-1.5zM16 17H8v-2h8v2zm-.5-4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></symbol>
+  </svg>
+</head>
+<body>
+  <div class="header">
+    <div class="logo"><svg class="icon" width="20" height="20"><use href="#icon-chat"/></svg></div>
+    <div class="header-info">
+      <h1>小叶子</h1>
+      <p>额度透支</p>
+    </div>
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot"></span>
+      <span id="statusText">未连接</span>
+    </div>
+  </div>
+
+  <div id="messages">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon"><svg class="icon"><use href="#icon-rocket"/></svg></div>
+      <h3>准备就绪</h3>
+      <p>在下方输入消息发送给 Cursor AI，支持粘贴或选择图片<br>AI 回复完成后会在这里等待你的下一条指令<br><span class="kbd">Enter</span> 发送 &nbsp; <span class="kbd">Shift + Enter</span> 换行</p>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <div class="input-wrapper">
+        <textarea id="input" placeholder="输入消息或粘贴图片..." rows="1"></textarea>
+        <button type="button" class="img-add-btn" id="imgAddBtn" title="添加图片">
+          <svg class="icon" width="18" height="18"><use href="#icon-picture"/></svg>
+        </button>
+        <input type="file" id="imgInput" accept="image/*" multiple>
+        <button id="sendBtn" onclick="send()" title="发送">
+          <svg class="icon" width="18" height="18"><use href="#icon-send"/></svg>
+        </button>
+      </div>
+      <div class="img-previews" id="imgPreviews"></div>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('input');
+    const messagesEl = document.getElementById('messages');
+    const emptyState = document.getElementById('emptyState');
+    const statusPill = document.getElementById('statusPill');
+    const statusText = document.getElementById('statusText');
+    const imgAddBtn = document.getElementById('imgAddBtn');
+    const imgInput = document.getElementById('imgInput');
+    const imgPreviews = document.getElementById('imgPreviews');
+    let lastSeenId = 0;
+    let pendingImages = [];
+
+    imgAddBtn.addEventListener('click', () => imgInput.click());
+    imgInput.addEventListener('change', () => {
+      const files = Array.from(imgInput.files || []);
+      imgInput.value = '';
+      files.forEach(f => addImageFile(f));
+    });
+    input.addEventListener('paste', e => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith('image/')) {
+          e.preventDefault();
+          addImageFile(items[i].getAsFile());
+          break;
+        }
+      }
+    });
+    function addImageFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = reader.result;
+        const mime = file.type || 'image/png';
+        pendingImages.push({ data, mime });
+        renderPreviews();
+      };
+      reader.readAsDataURL(file);
+    }
+    function renderPreviews() {
+      imgPreviews.innerHTML = '';
+      pendingImages.forEach((img, i) => {
+        const div = document.createElement('div');
+        div.className = 'img-preview';
+        div.innerHTML = '<img src="' + img.data + '" alt=""><button type="button" class="img-remove" aria-label="移除">×</button>';
+        div.querySelector('.img-remove').onclick = () => {
+          pendingImages.splice(i, 1);
+          renderPreviews();
+        };
+        imgPreviews.appendChild(div);
+      });
+    }
+    function clearPendingImages() {
+      pendingImages = [];
+      renderPreviews();
+    }
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+    });
+    input.addEventListener('input', () => {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    });
+
+    async function send() {
+      const msg = input.value.trim();
+      const images = pendingImages.map(i => ({ data: i.data, mime: i.mime }));
+      if (!msg && images.length === 0) return;
+      addMsg(msg, 'user', images);
+      input.value = ''; input.style.height = 'auto';
+      clearPendingImages();
+      try {
+        await fetch('/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: msg, images })
+        });
+      } catch { addMsg('[发送失败，请检查 MCP 服务是否运行]', 'ai'); }
+    }
+
+    function addMsg(text, role, images) {
+      if (emptyState) emptyState.remove();
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + role;
+      const iconId = role === 'user' ? 'icon-user' : 'icon-robot';
+      const av = '<svg class="icon" width="18" height="18"><use href="#' + iconId + '"/></svg>';
+      const escaped = (text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      let bubbleContent = escaped;
+      if (images && images.length > 0) {
+        images.forEach(img => {
+          bubbleContent += '<img class="bubble-img" src="' + img.data + '" alt="图片">';
+        });
+      }
+      row.innerHTML =
+        '<div class="avatar">' + av + '</div>' +
+        '<div class="bubble">' + bubbleContent +
+        '<div class="time">' + new Date().toLocaleTimeString() + '</div></div>';
+      messagesEl.appendChild(row);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function poll() {
+      try {
+        const r = await fetch('/poll?after=' + lastSeenId);
+        const d = await r.json();
+        if (d.waiting) {
+          statusText.textContent = '等待输入...';
+          statusPill.className = 'status-pill waiting';
+        } else {
+          statusText.textContent = 'AI 处理中';
+          statusPill.className = 'status-pill connected';
+        }
+        if (d.responses && d.responses.length > 0) {
+          for (const resp of d.responses) {
+            addMsg(resp.text, 'ai');
+            lastSeenId = resp.id;
+          }
+        }
+      } catch {
+        statusText.textContent = '未连接';
+        statusPill.className = 'status-pill';
+      }
+    }
+
+    setInterval(poll, 1500);
+    poll();
+    input.focus();
+  </script>
+</body>
+</html>`;
+
+// ── HTTP Server ─────────────────────────────────────────────
+const httpServer = http.createServer((req, res) => {
+  const url = new URL(req.url, `http://localhost:${PORT}`);
+
+  if (req.method === "GET" && url.pathname === "/") {
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    });
+    res.end(HTML);
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/poll") {
+    const afterId = parseInt(url.searchParams.get("after") || "0", 10);
+    const newResponses = aiResponses.filter((r) => r.id > afterId);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        waiting: waitingResolve !== null,
+        queueLength: messageQueue.length,
+        responses: newResponses,
+      })
+    );
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/send") {
+    let body = "";
+    req.on("data", (chunk) => (body += chunk));
+    req.on("end", () => {
+      try {
+        const { message, images } = JSON.parse(body);
+        const hasText = message && String(message).trim();
+        const hasImages = Array.isArray(images) && images.length > 0;
+        if (hasText || hasImages) {
+          const payload = {
+            text: hasText ? String(message).trim() : "",
+            images: hasImages ? images : [],
+          };
+          if (waitingResolve) {
+            waitingResolve(payload);
+            waitingResolve = null;
+          } else {
+            messageQueue.push(payload);
+          }
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: true }));
+        } else {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: "empty" }));
+        }
+      } catch {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: "invalid json" }));
+      }
+    });
+    return;
+  }
+
+  res.writeHead(404);
+  res.end("Not Found");
+});
+
+httpServer.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    const alt = PORT + 1;
+    console.error(`[xiaohaha-mcp] Port ${PORT} in use, trying ${alt}`);
+    httpServer.listen(alt, () =>
+      console.error(`[xiaohaha-mcp] Chat UI ready: http://localhost:${alt}`)
+    );
+  } else {
+    console.error("[xiaohaha-mcp] HTTP error:", err);
+  }
+});
+
+httpServer.listen(PORT, () => {
+  console.error(`[xiaohaha-mcp] Chat UI ready: http://localhost:${PORT}`);
+});

@@ -1,0 +1,133 @@
+Loading features...
+
+================================================================================
+Seed 42
+================================================================================
+  SADC_ATD_baseline                                  mf1=0.7816 Eos=0.5190 expert=0
+  expert_m003                                        mf1=0.7753 Eos=0.5032 expert=79
+  expert_m005                                        mf1=0.7753 Eos=0.5032 expert=101
+  expert_m008                                        mf1=0.7753 Eos=0.5032 expert=104
+  expert_m010                                        mf1=0.7753 Eos=0.5032 expert=105
+  expert_m015                                        mf1=0.7753 Eos=0.5032 expert=105
+  expert_m005_mw04                                   mf1=0.7806 Eos=0.5161 expert=101
+  expert_m005_mw08                                   mf1=0.7608 Eos=0.4713 expert=101
+  expert_m005_mw10                                   mf1=0.7567 Eos=0.4654 expert=101
+  expert_m005+rect03                                 mf1=0.7753 Eos=0.5032 expert=101
+  expert_m005+rect05                                 mf1=0.7753 Eos=0.5032 expert=101
+  expert_m010+rect03                                 mf1=0.7753 Eos=0.5032 expert=105
+  eos_temp08                                         mf1=0.0568 Eos=0.0879 expert=0
+  eos_temp06                                         mf1=0.0211 Eos=0.0844 expert=0
+  eos_temp10                                         mf1=0.7816 Eos=0.5190 expert=0
+  expert_m005+rect03+temp08                          mf1=0.2086 Eos=0.0902 expert=101
+  expert_m010+rect03+temp06                          mf1=0.1796 Eos=0.0867 expert=105
+
+================================================================================
+Seed 123
+================================================================================
+  SADC_ATD_baseline                                  mf1=0.7703 Eos=0.4854 expert=0
+  expert_m003                                        mf1=0.7477 Eos=0.4434 expert=142
+  expert_m005                                        mf1=0.7477 Eos=0.4434 expert=164
+  expert_m008                                        mf1=0.7477 Eos=0.4434 expert=171
+  expert_m010                                        mf1=0.7477 Eos=0.4434 expert=172
+  expert_m015                                        mf1=0.7477 Eos=0.4434 expert=172
+  expert_m005_mw04                                   mf1=0.7575 Eos=0.4608 expert=164
+  expert_m005_mw08                                   mf1=0.7269 Eos=0.3846 expert=164
+  expert_m005_mw10                                   mf1=0.7149 Eos=0.3507 expert=164
+  expert_m005+rect03                                 mf1=0.7477 Eos=0.4434 expert=164
+  expert_m005+rect05                                 mf1=0.7477 Eos=0.4434 expert=164
+  expert_m010+rect03                                 mf1=0.7477 Eos=0.4434 expert=172
+  eos_temp08                                         mf1=0.0239 Eos=0.0847 expert=0
+  eos_temp06                                         mf1=0.0211 Eos=0.0844 expert=0
+  eos_temp10                                         mf1=0.7703 Eos=0.4854 expert=0
+  expert_m005+rect03+temp08                          mf1=0.1558 Eos=0.0840 expert=164
+  expert_m010+rect03+temp06                          mf1=0.1649 Eos=0.0842 expert=172
+
+================================================================================
+Seed 456
+================================================================================
+  SADC_ATD_baseline                                  mf1=0.7688 Eos=0.5170 expert=0
+  expert_m003                                        mf1=0.7622 Eos=0.5033 expert=24
+  expert_m005                                        mf1=0.7622 Eos=0.5033 expert=28
+  expert_m008                                        mf1=0.7622 Eos=0.5033 expert=29
+  expert_m010                                        mf1=0.7622 Eos=0.5033 expert=29
+  expert_m015                                        mf1=0.7622 Eos=0.5033 expert=29
+  expert_m005_mw04                                   mf1=0.7675 Eos=0.5166 expert=28
+  expert_m005_mw08                                   mf1=0.7622 Eos=0.5033 expert=28
+  expert_m005_mw10                                   mf1=0.7600 Eos=0.5000 expert=28
+  expert_m005+rect03                                 mf1=0.7622 Eos=0.5033 expert=28
+  expert_m005+rect05                                 mf1=0.7622 Eos=0.5033 expert=28
+  expert_m010+rect03                                 mf1=0.7622 Eos=0.5033 expert=29
+  eos_temp08                                         mf1=0.0288 Eos=0.0851 expert=0
+  eos_temp06                                         mf1=0.0211 Eos=0.0844 expert=0
+  eos_temp10                                         mf1=0.7688 Eos=0.5170 expert=0
+  expert_m005+rect03+temp08                          mf1=0.0492 Eos=0.0799 expert=28
+  expert_m010+rect03+temp06                          mf1=0.0450 Eos=0.0793 expert=29
+
+================================================================================
+Seed 789
+================================================================================
+  SADC_ATD_baseline                                  mf1=0.7134 Eos=0.3443 expert=0
+  expert_m003                                        mf1=0.7182 Eos=0.3759 expert=20
+  expert_m005                                        mf1=0.7182 Eos=0.3759 expert=21
+  expert_m008                                        mf1=0.7182 Eos=0.3759 expert=22
+  expert_m010                                        mf1=0.7182 Eos=0.3759 expert=22
+  expert_m015                                        mf1=0.7182 Eos=0.3759 expert=22
+  expert_m005_mw04                                   mf1=0.7125 Eos=0.3538 expert=21
+  expert_m005_mw08                                   mf1=0.7182 Eos=0.3759 expert=21
+  expert_m005_mw10                                   mf1=0.7182 Eos=0.3759 expert=21
+  expert_m005+rect03                                 mf1=0.7182 Eos=0.3759 expert=21
+  expert_m005+rect05                                 mf1=0.7182 Eos=0.3759 expert=21
+  expert_m010+rect03                                 mf1=0.7182 Eos=0.3759 expert=22
+  eos_temp08                                         mf1=0.0225 Eos=0.0845 expert=0
+  eos_temp06                                         mf1=0.0211 Eos=0.0844 expert=0
+  eos_temp10                                         mf1=0.7134 Eos=0.3443 expert=0
+  expert_m005+rect03+temp08                          mf1=0.0260 Eos=0.0833 expert=21
+  expert_m010+rect03+temp06                          mf1=0.0284 Eos=0.0832 expert=22
+
+================================================================================
+Seed 2026
+================================================================================
+  SADC_ATD_baseline                                  mf1=0.7250 Eos=0.3363 expert=0
+  expert_m003                                        mf1=0.7100 Eos=0.2936 expert=42
+  expert_m005                                        mf1=0.7100 Eos=0.2936 expert=45
+  expert_m008                                        mf1=0.7100 Eos=0.2936 expert=46
+  expert_m010                                        mf1=0.7100 Eos=0.2936 expert=46
+  expert_m015                                        mf1=0.7100 Eos=0.2936 expert=46
+  expert_m005_mw04                                   mf1=0.7294 Eos=0.3540 expert=45
+  expert_m005_mw08                                   mf1=0.7008 Eos=0.2642 expert=45
+  expert_m005_mw10                                   mf1=0.6927 Eos=0.2430 expert=45
+  expert_m005+rect03                                 mf1=0.7100 Eos=0.2936 expert=45
+  expert_m005+rect05                                 mf1=0.7100 Eos=0.2936 expert=45
+  expert_m010+rect03                                 mf1=0.7100 Eos=0.2936 expert=46
+  eos_temp08                                         mf1=0.0382 Eos=0.0860 expert=0
+  eos_temp06                                         mf1=0.0211 Eos=0.0844 expert=0
+  eos_temp10                                         mf1=0.7250 Eos=0.3363 expert=0
+  expert_m005+rect03+temp08                          mf1=0.0775 Eos=0.0741 expert=45
+  expert_m010+rect03+temp06                          mf1=0.0604 Eos=0.0728 expert=46
+
+======================================================================================================================================================
+EOS SPECIALIST RESULTS (5 seeds, data2_organized)
+======================================================================================================================================================
+Strategy                                                    Acc     mF1     Eos     Neu     Lym     Mac     As    Fs  Exp
+------------------------------------------------------------------------------------------------------------------------------------------------------
+SADC_ATD_baseline                                        0.8723  0.7518  0.4404  0.7523  0.9334  0.8811  0.011 0.027    0
+eos_temp10                                               0.8723  0.7518  0.4404  0.7523  0.9334  0.8811  0.011 0.027    0
+expert_m005_mw04                                         0.8710  0.7495  0.4403  0.7432  0.9334  0.8811  0.012 0.025   71
+expert_m003                                              0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   61
+expert_m005                                              0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   71
+expert_m008                                              0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   74
+expert_m010                                              0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   74
+expert_m015                                              0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   74
+expert_m005+rect03                                       0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   71
+expert_m005+rect05                                       0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   71
+expert_m010+rect03                                       0.8688  0.7427  0.4239  0.7323  0.9334  0.8811  0.012 0.025   74
+expert_m005_mw08                                         0.8663  0.7338  0.3999  0.7206  0.9334  0.8811  0.013 0.024   71
+expert_m005_mw10                                         0.8644  0.7285  0.3870  0.7124  0.9334  0.8811  0.013 0.026   71
+expert_m005+rect03+temp08                                0.0766  0.1034  0.0823  0.2809  0.0505  0.0000  0.030 0.068   71
+expert_m010+rect03+temp06                                0.0640  0.0957  0.0812  0.3014  0.0000  0.0000  0.022 0.064   74
+eos_temp08                                               0.0587  0.0340  0.0856  0.0000  0.0505  0.0000  0.015 0.013    0
+eos_temp06                                               0.0441  0.0211  0.0844  0.0000  0.0000  0.0000  0.000 0.000    0
+
+*** BEST: SADC_ATD_baseline ***
+    mF1=0.7518, Eos F1=0.4404
+    Eos improvement: +0.0000

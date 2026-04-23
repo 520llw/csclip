@@ -1,0 +1,66 @@
+{
+  "name": "gjw-webview",
+  "displayName": "gjw · 科研增强版",
+  "description": "在 Cursor/VS Code 侧栏嵌入gjw聊天面板，实现同轮多反馈",
+  "version": "1.0.0",
+  "publisher": "gjw",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onView:gjw.chatPanel"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "gjwPanel",
+          "title": "gjw",
+          "icon": "$(comment-discussion)"
+        }
+      ]
+    },
+    "views": {
+      "gjwPanel": [
+        {
+          "type": "webview",
+          "id": "gjw.chatPanel",
+          "name": "聊天",
+          "icon": "$(comment-discussion)",
+          "contextualTitle": "gjw"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gjw.openPanel",
+        "title": "gjw: 打开聊天面板",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "gjw.reloadPanel",
+        "title": "gjw: 刷新面板",
+        "icon": "$(refresh)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "gjw.openPanel",
+        "key": "ctrl+alt+j",
+        "mac": "cmd+alt+j"
+      }
+    ],
+    "configuration": {
+      "title": "gjw",
+      "properties": {
+        "gjw.port": {
+          "type": "number",
+          "default": 3456,
+          "description": "gjw MCP 服务端口"
+        }
+      }
+    }
+  }
+}

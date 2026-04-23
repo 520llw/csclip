@@ -1,0 +1,78 @@
+# GitHub 不推送规则
+# 根据要求：权重文件、数据集、图片均不推送
+
+# === 模型权重 ===
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+model_weights/*
+!model_weights/.gitkeep
+labeling_tool/weights/*
+!labeling_tool/weights/.gitkeep
+
+# === 数据集 ===
+cell_datasets/
+
+# === 特征缓存 ===
+experiments/feature_cache/
+
+# === 图片与预览缓存 ===
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.tif
+*.webp
+.patent_figures/
+patent_figures/
+.cache/
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# === Node ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === 环境 ===
+.env
+.venv
+env/
+venv/
+ENV/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === 日志与临时文件 ===
+*.log
+*.tmp
+/tmp/
