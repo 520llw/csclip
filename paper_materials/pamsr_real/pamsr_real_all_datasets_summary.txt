@@ -1,0 +1,2 @@
+data1 / 1131: Single (3, 0, 1) -> PAMSR (4, 0, 0)  rescued=1
+multicenter / 1238: Single (1, 4, 0) -> PAMSR (1, 5, 0)  rescued=1

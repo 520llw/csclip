@@ -1,0 +1,4 @@
+Image: 1483.jpg (853x640)
+cell_id,class_name,class_id,center_x,center_y,bbox_x1,bbox_y1,bbox_x2,bbox_y2
+0,Macrophage,6,325.3,291.1,251.0,209.0,403.0,376.0
+1,Neutrophil,4,436.3,331.9,391.0,267.0,485.0,398.0

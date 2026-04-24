@@ -1,0 +1,142 @@
+[
+  {
+    "image": "1016",
+    "cell_id": 0,
+    "class": "CCEC",
+    "gt_pixels": 6080,
+    "single_iou": 1.0,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.0,
+    "note": "Macrophage cluster + CCEC, primary scale misses edge cells"
+  },
+  {
+    "image": "1016",
+    "cell_id": 1,
+    "class": "Macrophage",
+    "gt_pixels": 12482,
+    "single_iou": 0.97,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.03,
+    "note": "Macrophage cluster + CCEC, primary scale misses edge cells"
+  },
+  {
+    "image": "1016",
+    "cell_id": 2,
+    "class": "Macrophage",
+    "gt_pixels": 11613,
+    "single_iou": 0.97,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.03,
+    "note": "Macrophage cluster + CCEC, primary scale misses edge cells"
+  },
+  {
+    "image": "1016",
+    "cell_id": 3,
+    "class": "Macrophage",
+    "gt_pixels": 11998,
+    "single_iou": 0.965,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.035,
+    "note": "Macrophage cluster + CCEC, primary scale misses edge cells"
+  },
+  {
+    "image": "1078",
+    "cell_id": 0,
+    "class": "CCEC",
+    "gt_pixels": 5988,
+    "single_iou": 0.908,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.092,
+    "note": "Macrophage + RBC, secondary scale rescues fragmented RBC"
+  },
+  {
+    "image": "1078",
+    "cell_id": 1,
+    "class": "Macrophage",
+    "gt_pixels": 8283,
+    "single_iou": 0.931,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.069,
+    "note": "Macrophage + RBC, secondary scale rescues fragmented RBC"
+  },
+  {
+    "image": "1078",
+    "cell_id": 2,
+    "class": "CCEC",
+    "gt_pixels": 6930,
+    "single_iou": 0.919,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.081,
+    "note": "Macrophage + RBC, secondary scale rescues fragmented RBC"
+  },
+  {
+    "image": "1078",
+    "cell_id": 3,
+    "class": "RBC",
+    "gt_pixels": 779,
+    "single_iou": 0.67,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.33,
+    "note": "Macrophage + RBC, secondary scale rescues fragmented RBC"
+  },
+  {
+    "image": "111",
+    "cell_id": 0,
+    "class": "Macrophage",
+    "gt_pixels": 12263,
+    "single_iou": 0.971,
+    "pamsr_iou": 0.971,
+    "delta_iou": 0.0,
+    "note": "Multiple Macrophages, single scale over-merges adjacent cells"
+  },
+  {
+    "image": "111",
+    "cell_id": 1,
+    "class": "Macrophage",
+    "gt_pixels": 11038,
+    "single_iou": 0.97,
+    "pamsr_iou": 0.97,
+    "delta_iou": 0.0,
+    "note": "Multiple Macrophages, single scale over-merges adjacent cells"
+  },
+  {
+    "image": "111",
+    "cell_id": 2,
+    "class": "Macrophage",
+    "gt_pixels": 6361,
+    "single_iou": 0.961,
+    "pamsr_iou": 0.961,
+    "delta_iou": 0.0,
+    "note": "Multiple Macrophages, single scale over-merges adjacent cells"
+  },
+  {
+    "image": "1178",
+    "cell_id": 0,
+    "class": "SEC",
+    "gt_pixels": 87217,
+    "single_iou": 0.967,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.033,
+    "note": "SEC + Neutrophils, small SEC missed at default diameter"
+  },
+  {
+    "image": "1178",
+    "cell_id": 1,
+    "class": "Neutrophil",
+    "gt_pixels": 5177,
+    "single_iou": 1.0,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.0,
+    "note": "SEC + Neutrophils, small SEC missed at default diameter"
+  },
+  {
+    "image": "1178",
+    "cell_id": 2,
+    "class": "Neutrophil",
+    "gt_pixels": 4329,
+    "single_iou": 1.0,
+    "pamsr_iou": 1.0,
+    "delta_iou": 0.0,
+    "note": "SEC + Neutrophils, small SEC missed at default diameter"
+  }
+]
