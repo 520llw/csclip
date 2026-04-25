@@ -918,24 +918,37 @@ def _list_image_files(directory: str) -> List[str]:
 
 def _label_dir_summary(lbl_dir: str, names: Dict[Any, str] | None = None) -> Dict[str, Any]:
     """Walk a label directory once and summarize: labeled count, total annotations,
-    per-class distribution. Cached by directory mtime — repeat calls are O(1).
+    per-class distribution, and the set of labeled stems. Cached by directory mtime
+    — repeat calls are O(1).
 
     `names` (class id -> display name) is applied at read time so distribution is
     keyed by human-readable class names. Stats are keyed by class_id internally so
     a single cache hit can be re-projected if names change.
+
+    The returned `labeled_stems` is a frozenset of basenames-without-extension that
+    have at least one annotation; callers like `/api/images/paginated` use it for
+    O(1) labeled-vs-unlabeled filtering instead of N filesystem stats.
     """
+    empty = {
+        "labeled": 0,
+        "total_annotations": 0,
+        "by_class_id": {},
+        "by_class": {},
+        "labeled_stems": frozenset(),
+    }
     if not lbl_dir or not os.path.isdir(lbl_dir):
-        return {"labeled": 0, "total_annotations": 0, "by_class_id": {}, "by_class": {}}
+        return empty
     try:
         mtime = os.path.getmtime(lbl_dir)
     except OSError:
-        return {"labeled": 0, "total_annotations": 0, "by_class_id": {}, "by_class": {}}
+        return empty
 
     cached = _LABEL_DIR_CACHE.get(lbl_dir)
     if cached is None or cached[0] != mtime:
         labeled = 0
         total_anns = 0
         by_class_id: Dict[int, int] = {}
+        labeled_stems: set = set()
         try:
             for f in os.listdir(lbl_dir):
                 if not f.endswith(".txt"):
@@ -959,6 +972,7 @@ def _label_dir_summary(lbl_dir: str, names: Dict[Any, str] | None = None) -> Dic
                             has_any = True
                     if has_any:
                         labeled += 1
+                        labeled_stems.add(os.path.splitext(f)[0])
                 except OSError:
                     continue
         except OSError:
@@ -967,6 +981,7 @@ def _label_dir_summary(lbl_dir: str, names: Dict[Any, str] | None = None) -> Dic
             "labeled": labeled,
             "total_annotations": total_anns,
             "by_class_id": by_class_id,
+            "labeled_stems": frozenset(labeled_stems),
         }
         with _LABEL_DIR_CACHE_LOCK:
             _LABEL_DIR_CACHE[lbl_dir] = (mtime, summary)
@@ -4146,18 +4161,17 @@ def _get_quick_stats(group_id: str, label_set_id: str, subset: str) -> Dict[str,
     files = _list_image_files(imgs_dir)
     total = len(files)
 
-    labeled = 0
-    total_anns = 0
-
-    for fp in files:
-        fn = os.path.basename(fp)
-        base, _ = os.path.splitext(fn)
-        lbl_path = os.path.join(lbls_dir, base + ".txt") if lbls_dir else ""
-        if lbl_path and os.path.exists(lbl_path) and os.path.getsize(lbl_path) > 0:
-            anns = _read_annotations(lbl_path)
-            if anns:
-                labeled += 1
-                total_anns += len(anns)
+    # Single mtime-cached pass over the label directory, then intersect with the
+    # image filenames to count "labeled images that actually have an image too".
+    summary = _label_dir_summary(lbls_dir)
+    labeled_stems = summary["labeled_stems"]
+    if labeled_stems:
+        labeled = sum(
+            1 for fp in files if os.path.splitext(os.path.basename(fp))[0] in labeled_stems
+        )
+    else:
+        labeled = 0
+    total_anns = summary["total_annotations"]
 
     result = {
         "total_images": total,
@@ -5608,24 +5622,16 @@ def list_images_paginated(
 
     files = _list_image_files(imgs_dir)
 
-    # Build image list with label status
-    images = []
-    for fp in files:
-        fn = os.path.basename(fp)
-        base, _ = os.path.splitext(fn)
-        label_path = os.path.join(lbls_dir, base + ".txt") if lbls_dir else ""
-        has_label = (
-            label_path
-            and os.path.exists(label_path)
-            and os.path.getsize(label_path) > 0
-        )
-
-        images.append(
-            {
-                "filename": fn,
-                "has_label": has_label,
-            }
-        )
+    # O(1) per-file labeled check via the mtime-cached labeled-stem set, instead
+    # of N filesystem stats per page request.
+    labeled_stems = _label_dir_summary(lbls_dir)["labeled_stems"]
+    images = [
+        {
+            "filename": (fn := os.path.basename(fp)),
+            "has_label": os.path.splitext(fn)[0] in labeled_stems,
+        }
+        for fp in files
+    ]
 
     # Apply filters
     if filter_type == "labeled":
