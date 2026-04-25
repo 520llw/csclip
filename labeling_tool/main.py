@@ -195,12 +195,28 @@ _stats_cache: Dict[
 ] = {}  # (group_id, label_set, subset) -> (timestamp, stats)
 _STATS_CACHE_TTL = 30  # seconds
 
+# mtime-keyed cache for label-dir summaries (labeled count, total annotations, class
+# distribution). Avoids re-walking every .txt on every Datasets / Stats tab open.
+# key: lbl_dir absolute path -> (dir_mtime, summary_dict)
+_LABEL_DIR_CACHE: Dict[str, tuple] = {}
+_LABEL_DIR_CACHE_LOCK = threading.Lock()
+
+# mtime-keyed cache for _list_image_files. Image directories rarely change between
+# requests; the existing implementation re-scandirs + sorts on every call.
+# key: imgs_dir absolute path -> (dir_mtime, sorted_paths)
+_IMAGE_DIR_CACHE: Dict[str, tuple] = {}
+_IMAGE_DIR_CACHE_LOCK = threading.Lock()
+
 
 def _mark_groups_dirty():
     """Mark IMAGE_GROUPS as stale. Next read endpoint will rebuild."""
     global _groups_dirty, _stats_cache
     _groups_dirty = True
     _stats_cache.clear()
+    with _LABEL_DIR_CACHE_LOCK:
+        _LABEL_DIR_CACHE.clear()
+    with _IMAGE_DIR_CACHE_LOCK:
+        _IMAGE_DIR_CACHE.clear()
 
 
 def _ensure_groups_fresh():
@@ -880,7 +896,14 @@ def _get_dirs(g: Dict, ls: Dict, subset: str) -> tuple:
 def _list_image_files(directory: str) -> List[str]:
     if not directory or not os.path.isdir(directory):
         return []
-    files = []
+    try:
+        mtime = os.path.getmtime(directory)
+    except OSError:
+        return []
+    cached = _IMAGE_DIR_CACHE.get(directory)
+    if cached is not None and cached[0] == mtime:
+        return cached[1]
+    files: List[str] = []
     try:
         for f in os.listdir(directory):
             if os.path.splitext(f)[1].lower() in _IMAGE_EXTS:
@@ -888,7 +911,77 @@ def _list_image_files(directory: str) -> List[str]:
     except OSError:
         return []
     files.sort(key=lambda x: _natural_sort_key(os.path.basename(x)))
+    with _IMAGE_DIR_CACHE_LOCK:
+        _IMAGE_DIR_CACHE[directory] = (mtime, files)
     return files
+
+
+def _label_dir_summary(lbl_dir: str, names: Dict[Any, str] | None = None) -> Dict[str, Any]:
+    """Walk a label directory once and summarize: labeled count, total annotations,
+    per-class distribution. Cached by directory mtime — repeat calls are O(1).
+
+    `names` (class id -> display name) is applied at read time so distribution is
+    keyed by human-readable class names. Stats are keyed by class_id internally so
+    a single cache hit can be re-projected if names change.
+    """
+    if not lbl_dir or not os.path.isdir(lbl_dir):
+        return {"labeled": 0, "total_annotations": 0, "by_class_id": {}, "by_class": {}}
+    try:
+        mtime = os.path.getmtime(lbl_dir)
+    except OSError:
+        return {"labeled": 0, "total_annotations": 0, "by_class_id": {}, "by_class": {}}
+
+    cached = _LABEL_DIR_CACHE.get(lbl_dir)
+    if cached is None or cached[0] != mtime:
+        labeled = 0
+        total_anns = 0
+        by_class_id: Dict[int, int] = {}
+        try:
+            for f in os.listdir(lbl_dir):
+                if not f.endswith(".txt"):
+                    continue
+                fp = os.path.join(lbl_dir, f)
+                try:
+                    if os.path.getsize(fp) <= 0:
+                        continue
+                    has_any = False
+                    with open(fp, "r", encoding="utf-8", errors="ignore") as fh:
+                        for line in fh:
+                            parts = line.strip().split()
+                            if len(parts) < 5:
+                                continue
+                            try:
+                                cid = int(parts[0])
+                            except ValueError:
+                                continue
+                            total_anns += 1
+                            by_class_id[cid] = by_class_id.get(cid, 0) + 1
+                            has_any = True
+                    if has_any:
+                        labeled += 1
+                except OSError:
+                    continue
+        except OSError:
+            pass
+        summary = {
+            "labeled": labeled,
+            "total_annotations": total_anns,
+            "by_class_id": by_class_id,
+        }
+        with _LABEL_DIR_CACHE_LOCK:
+            _LABEL_DIR_CACHE[lbl_dir] = (mtime, summary)
+    else:
+        summary = cached[1]
+
+    # Project class-id histogram through the supplied names map for callers that
+    # want a human-readable distribution.
+    if names:
+        by_class: Dict[str, int] = {}
+        for cid, count in summary["by_class_id"].items():
+            cname = names.get(cid, names.get(str(cid), f"class_{cid}"))
+            by_class[cname] = by_class.get(cname, 0) + count
+        return {**summary, "by_class": by_class}
+    return {**summary, "by_class": {}}
 
 
 def _label_path_for(lbls_dir: str, filename: str) -> str:
@@ -3653,29 +3746,20 @@ def dataset_stats_all():
 
         ls = sorted(label_sets, key=_ls_priority)[0]
 
-        # Use _list_image_files for consistency with /api/images
+        # Use _list_image_files for consistency with /api/images (mtime-cached).
         img_dir = g["train_images"]
         lbl_dir = ls.get("train_labels", "")
         images = _list_image_files(img_dir)  # already deduped
         names = g.get("names", {})
-        class_dist = {}
-        labeled = 0
-        total_anns = 0
 
-        for img_fp in images:
-            img_f = os.path.basename(img_fp)
-            stem = os.path.splitext(img_f)[0]
-            lbl_path = os.path.join(lbl_dir, stem + ".txt") if lbl_dir else ""
-            if not lbl_path or not os.path.exists(lbl_path):
-                continue
-            anns = _read_annotations(lbl_path)
-            if anns:
-                labeled += 1
-            for a in anns:
-                total_anns += 1
-                cid = a["class_id"]
-                cname = names.get(cid, names.get(str(cid), f"class_{cid}"))
-                class_dist[cname] = class_dist.get(cname, 0) + 1
+        # Single mtime-cached pass over the label directory. Repeat tab opens are
+        # O(1) until a label file is written.
+        summary = _label_dir_summary(lbl_dir, names) if lbl_dir else {
+            "labeled": 0, "total_annotations": 0, "by_class": {}
+        }
+        labeled = summary["labeled"]
+        total_anns = summary["total_annotations"]
+        class_dist = summary["by_class"]
 
         results.append(
             {
@@ -5831,21 +5915,10 @@ def api_get_stats_overview():
         if not first_ls:
             continue
         ls = first_ls[0]
-        g_labeled = 0
-        for subset in ["train", "val"]:
-            imgs_dir, lbls_dir = _get_dirs(g, ls, subset)
-            if not lbls_dir or not os.path.isdir(lbls_dir):
-                continue
-            sub_count = 0
-            for f in os.listdir(lbls_dir):
-                if f.endswith(".txt"):
-                    fp = os.path.join(lbls_dir, f)
-                    if os.path.getsize(fp) > 0:
-                        sub_count += 1
-            g_labeled += sub_count
-            logging.info(f"STATS_DEBUG: {g['group_name']} {subset} lbls_dir={lbls_dir} count={sub_count}")
-        total_labeled += g_labeled
-        logging.info(f"STATS_DEBUG: {g['group_name']} total_labeled_so_far={total_labeled}")
+        for subset in ("train", "val"):
+            _, lbls_dir = _get_dirs(g, ls, subset)
+            # mtime-cached; subsequent calls within the same TTL are O(1).
+            total_labeled += _label_dir_summary(lbls_dir)["labeled"]
 
     summary = get_stats_summary(30)
     recent_exports = get_export_history(limit=5)
@@ -5858,6 +5931,9 @@ def api_get_stats_overview():
         "recent_activity": summary,
         "recent_exports": recent_exports,
     }
+
+
+
 
 
 # ?? User Preferences ??????????????????????????????????????????
