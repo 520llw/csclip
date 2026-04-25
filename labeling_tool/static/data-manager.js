@@ -210,6 +210,41 @@ const DM_BAR_COLORS = ['#7aa2ff', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#
 let _dmDatasetStatsCache = {};
 let _dmGroupsCache = null;
 
+// In-flight request dedupe: rapid tab switches in the data-management modal
+// used to fire 2-3 parallel /api/datasets/stats_all requests. dmFetch returns
+// the SAME promise for an identical idempotent request until it settles, so
+// concurrent callers share a single network round-trip.
+//
+// Dedupable: GET requests; POST/PUT requests with no body (read-only POSTs
+// like /api/datasets/stats_all are common in this codebase). Mutating requests
+// (any body, or DELETE) are passed through unchanged AND clear the dedupe map
+// so the next read reflects the new state.
+const _dmInFlight = new Map();
+function _dmIsDedupable(method, init) {
+    if (method === 'GET') return true;
+    if (method === 'DELETE') return false;
+    const hasBody = !!(init && init.body);
+    return !hasBody && (method === 'POST' || method === 'PUT');
+}
+function dmFetch(url, init) {
+    const method = (init && init.method ? String(init.method) : 'GET').toUpperCase();
+    if (!_dmIsDedupable(method, init)) {
+        _dmInFlight.clear();
+        return fetch(url, init);
+    }
+    const key = `${method} ${url}`;
+    const existing = _dmInFlight.get(key);
+    if (existing) return existing.then(r => r.clone());
+    const p = fetch(url, init).finally(() => {
+        // Tiny tail so a burst of fetches within ~80ms shares the same
+        // response even after the original promise technically settles.
+        setTimeout(() => _dmInFlight.delete(key), 80);
+    });
+    _dmInFlight.set(key, p);
+    return p.then(r => r.clone());
+}
+function dmFetchInvalidate() { _dmInFlight.clear(); }
+
 function escapeHtml(str) {
     if (str == null) return '';
     return String(str)
@@ -321,15 +356,15 @@ ${dmSkeletonDatasetList(5)}`;
 
     try {
         const [groupsRes, overviewRes] = await Promise.all([
-            fetch(`${DM_API}/groups`),
-            fetch(`${DM_API}/stats/overview`),
+            dmFetch(`${DM_API}/groups`),
+            dmFetch(`${DM_API}/stats/overview`),
         ]);
         const groups = await groupsRes.json();
         const overview = await overviewRes.json();
         _dmGroupsCache = groups;
 
         try {
-            const statsAllRes = await fetch(`${DM_API}/datasets/stats_all`, { method: 'POST' });
+            const statsAllRes = await dmFetch(`${DM_API}/datasets/stats_all`, { method: 'POST' });
             if (statsAllRes.ok) {
                 const allStats = await statsAllRes.json();
                 for (const s of allStats) {
@@ -559,7 +594,7 @@ async function dmSelectDataset(encodedId) {
     try {
         // Step 1: Refresh groups
         _dmSetLoadingStep(overlay, 1, '正在同步数据集列表...');
-        const freshRes = await fetch(`${DM_API}/groups`);
+        const freshRes = await dmFetch(`${DM_API}/groups`);
         if (!freshRes.ok) throw new Error(`获取数据集列表失败 (HTTP ${freshRes.status})`);
         const freshGroups = await freshRes.json();
         appState.groups = freshGroups;
@@ -703,9 +738,9 @@ async function renderDMStats(container) {
     container.innerHTML = dmSkeletonSummaryRow() + dmSkeletonDatasetList(3);
     try {
         const [summaryRes, dailyRes, overviewRes] = await Promise.all([
-            fetch(`${DM_API}/stats/summary?days=30`),
-            fetch(`${DM_API}/stats/daily?days=14`),
-            fetch(`${DM_API}/stats/overview`),
+            dmFetch(`${DM_API}/stats/summary?days=30`),
+            dmFetch(`${DM_API}/stats/daily?days=14`),
+            dmFetch(`${DM_API}/stats/overview`),
         ]);
         const summary = await summaryRes.json();
         const daily = await dailyRes.json();
@@ -793,7 +828,7 @@ async function renderDMStats(container) {
         container.innerHTML = html;
 
         try {
-            const gRes = await fetch(`${DM_API}/groups`);
+            const gRes = await dmFetch(`${DM_API}/groups`);
             const groups = await gRes.json();
             const sel = document.getElementById('dm-stats-group-select');
             if (sel) groups.forEach(g => {
@@ -815,7 +850,7 @@ async function _loadClassDistribution() {
     if (!groupId) { chartDiv.innerHTML = '<div style="padding:24px;color:var(--text-2);text-align:center;">请选择数据集</div>'; return; }
     chartDiv.innerHTML = '<div style="padding:24px;color:var(--text-2);text-align:center;">加载中...</div>';
     try {
-        const res = await fetch(`${DM_API}/datasets/stats?group_id=${encodeURIComponent(groupId)}`);
+        const res = await dmFetch(`${DM_API}/datasets/stats?group_id=${encodeURIComponent(groupId)}`);
         const stats = await res.json();
         const dist = stats.class_distribution || {};
         const entries = Object.entries(dist).sort((a, b) => b[1] - a[1]);
@@ -870,7 +905,7 @@ async function renderDMEvaluate(container) {
     let groupOpts = '<option value="">-- 手动输入路径 --</option>';
     try {
         if (!_dmGroupsCache) {
-            const gRes = await fetch(`${DM_API}/groups`);
+            const gRes = await dmFetch(`${DM_API}/groups`);
             _dmGroupsCache = await gRes.json();
         }
         for (const g of (_dmGroupsCache || [])) {
@@ -1191,8 +1226,8 @@ async function renderDMExport(container) {
     container.innerHTML = dmSkeletonSummaryRow();
     try {
         const [groupsRes, historyRes] = await Promise.all([
-            fetch(`${DM_API}/groups`),
-            fetch(`${DM_API}/export_history?limit=20`),
+            dmFetch(`${DM_API}/groups`),
+            dmFetch(`${DM_API}/export_history?limit=20`),
         ]);
         const groups = await groupsRes.json();
         const history = await historyRes.json();
@@ -1349,7 +1384,7 @@ async function runDMExport() {
 async function renderDMAudit(container) {
     container.innerHTML = dmSkeletonDatasetList(6);
     try {
-        const res = await fetch(`${DM_API}/audit_log?limit=100`);
+        const res = await dmFetch(`${DM_API}/audit_log?limit=100`);
         const logs = await res.json();
 
         let html = `
@@ -1411,8 +1446,8 @@ async function renderDMProjects(container) {
     container.innerHTML = dmSkeletonDatasetList(3);
     try {
         const [projectsRes, groupsRes] = await Promise.all([
-            fetch(`${DM_API}/projects`),
-            fetch(`${DM_API}/groups`),
+            dmFetch(`${DM_API}/projects`),
+            dmFetch(`${DM_API}/groups`),
         ]);
         const projects = await projectsRes.json();
         _dmGroupsCache = await groupsRes.json();
@@ -1589,7 +1624,7 @@ async function createDMProject() {
 
 async function editDMProject(projectId) {
     try {
-        const res = await fetch(`${DM_API}/projects/${projectId}`);
+        const res = await dmFetch(`${DM_API}/projects/${projectId}`);
         const project = await res.json();
         if (!res.ok) throw new Error('Failed');
 
@@ -1705,7 +1740,7 @@ async function _toggleProjectDashboard(projectId) {
     div.style.display = '';
     div.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-2);font-size:11px;">加载仪表盘...</div>';
     try {
-        const projRes = await fetch(`${DM_API}/projects/${projectId}`);
+        const projRes = await dmFetch(`${DM_API}/projects/${projectId}`);
         const proj = await projRes.json();
         const dsIds = (proj.datasets || []).map(d => d.group_id);
         if (dsIds.length === 0 && (proj.dataset_ids || []).length > 0) {
@@ -1717,7 +1752,7 @@ async function _toggleProjectDashboard(projectId) {
         const allClassDist = {};
         for (const gid of dsIds) {
             try {
-                const sRes = await fetch(`${DM_API}/datasets/stats?group_id=${encodeURIComponent(gid)}`);
+                const sRes = await dmFetch(`${DM_API}/datasets/stats?group_id=${encodeURIComponent(gid)}`);
                 const stats = await sRes.json();
                 totalImages += stats.total_images || 0;
                 totalLabeled += stats.labeled_images || 0;
